@@ -17,7 +17,7 @@ function WeeklyWorkouts({ useDate: [date, setDate] }) {
                     day.getMonth() === date.getMonth()
             )
         )[0]
-        .map((day, i) => <WorkoutBrief date={day} setDate={setDate} />);
+        .map((day, i) => <WorkoutBrief date={day} setDate={setDate} key={i} />);
 }
 
 function WorkoutBrief({ date, setDate }) {

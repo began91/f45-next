@@ -20,7 +20,7 @@ export default function Home() {
                         </Link>
                     </li>
                     <li>
-                        See the workouts'{' '}
+                        See the workouts&apos;{' '}
                         <Link href="weekly">
                             <a>stations for this week</a>
                         </Link>
