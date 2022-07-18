@@ -1,0 +1,30 @@
+.workout {
+    display:flex;
+    justify-content:space-around;
+    border: 1px solid gray;
+    padding-left: 5px;
+    align-items: center;
+    cursor:pointer;
+}
+
+.workout > h4 {
+    flex: .7 0 0;
+}
+
+.workout > div {
+    flex: 1 0 0;
+}
+
+.logo {
+    border-radius: 5px;
+}
+
+.logoContainer {
+    max-width: 100px;
+    flex-grow: 0.5;
+    height: 100%;
+    margin: 3px 5px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px 2px rgba(0,0,0,0.2)
+}
+

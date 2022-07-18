@@ -1,0 +1,30 @@
+#dateSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+#monthRow {
+    display: flex;
+}
+
+.month {
+    background-color: green;
+    color: white;
+}
+
+#week {
+    display:flex;
+}
+
+.day {
+    font-weight: bold;
+    min-width: 38px;
+    flex: 0 1 auto;
+}
+
+#goToToday {
+    padding: 2px;
+    margin: 2px;
+}

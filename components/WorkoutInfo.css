@@ -1,0 +1,73 @@
+#workoutInfo {
+    display: grid;
+    grid-template-columns: 1.25fr 4fr;
+    align-items: center;
+    margin-top: 5px;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.workout-info-label, .workout-info-data {
+    border: 1px solid rgba(1,1,1,.1);
+    height: 100%;
+}
+
+.workout-info-label {
+    text-align: right;
+    padding-right: 2px;
+}
+
+.workout-info-data {
+    text-align: left;
+    padding-left: 3px;
+}
+
+ol#stationList {
+    grid-column: 1 / span 2 ;
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: flex-start;
+    justify-content: center;
+    padding-left: 25px;
+    margin-top: 5px;
+    list-style-position: outside;
+}
+
+button.clear-all {
+    place-self: center;
+}
+
+li.station-item {
+    width: auto;
+    position: relative;
+}
+
+textarea.station-input {
+    width: 95%;
+    resize: none;
+    padding: 2px;
+    border-radius: 2px;
+    border: 1px solid gray;
+    box-shadow: 2px 2px 10px 2px rgba(1,1,1,.1);
+}
+
+.clear-station {
+    position: absolute;
+    cursor: pointer;
+    z-index: 2;
+    top:50%;
+    transform: translate(0,-50%);
+    font-size: 12px;
+    width: 14px;
+    height: 14px;
+    right: 2.5%;
+    background-color: rgba(0,0,0,0.2);
+    border: none;
+    border-radius: 50%;
+    opacity: 0.5;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 0px;
+    vertical-align: middle;
+}
+
