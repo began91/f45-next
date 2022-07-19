@@ -25,7 +25,11 @@ function WorkoutBrief({ date, setDate }) {
 
     return (
         <Link href="/daily">
-            <div className={styles.workout} onClick={() => setDate(date)}>
+            <div
+                className={styles.workout}
+                onClick={() => setDate(date)}
+                title={workout.displayStyle}
+            >
                 <h4 className={utilStyles.headerMd}>
                     {date.toLocaleString(undefined, { weekday: 'long' })}
                 </h4>

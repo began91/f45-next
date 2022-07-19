@@ -238,7 +238,7 @@ let workoutsByDate = [
         'staggered squat jump',
     ]),
     Workout(2022, 7, 18, 'Templars', [
-        '    dumbbell speed sumo squat + bicep curl',
+        'dumbbell speed sumo squat + bicep curl',
         'push up + shoulder touch partnered',
         'bicycle ab crunch',
         'step trainer lateral hops + reverse shuffle',

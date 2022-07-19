@@ -1,8 +1,10 @@
+import React from 'react';
 import Layout from '../components/Layout';
 import Link from 'next/link';
 import { getWorkoutByDate } from '../src/helpers/lists';
 import styles from '../styles/daily.module.css';
 import utilStyles from '../styles/utils.module.css';
+import cn from 'classnames';
 
 export default function daily({ useDate: [date, setDate] }) {
     const workout = getWorkoutByDate(date);
@@ -26,12 +28,12 @@ export default function daily({ useDate: [date, setDate] }) {
         'Duration',
         'Misc',
     ];
-    console.log(workout.stationList);
+
     return (
         <Layout>
             <div className={styles.infoGrid}>
-                <div className={styles.label}>Date: </div>
-                <div className={styles.info}>
+                <b className={styles.label}>Date: </b>
+                <div className={cn(styles.info, styles.span3)}>
                     {date.toLocaleString(undefined, {
                         weekday: 'long',
                         month: 'long',
@@ -41,22 +43,28 @@ export default function daily({ useDate: [date, setDate] }) {
                 </div>
 
                 {workoutInfo.map((info, i) => (
-                    <>
-                        <div className={styles.label}>
-                            {workoutInfoLabels[i]}:{' '}
+                    <React.Fragment key={i}>
+                        <b className={styles.label}>{workoutInfoLabels[i]}: </b>
+                        <div
+                            className={cn(styles.info, {
+                                [styles.span3]: ![1, 2, 3, 4].includes(i),
+                            })}
+                        >
+                            {workout[info]}
                         </div>
-                        <div className={styles.info}>{workout[info]}</div>
-                    </>
+                    </React.Fragment>
                 ))}
             </div>
-            <label htmlFor="stationList" className={styles.label}>
-                Exercises:{' '}
-            </label>
+            <b htmlFor="stationList" className={styles.label}>
+                Exercises:
+            </b>
             <ol className={styles.info} id="stationList">
                 {workout.stationList
                     .filter((station, i) => i < workout.stations)
                     .map((station, i) => (
-                        <li key={i}>{station}</li>
+                        <li key={i} className={styles.station}>
+                            {station}
+                        </li>
                     ))}
             </ol>
             <Link href="/custom">
