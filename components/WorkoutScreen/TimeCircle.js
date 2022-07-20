@@ -1,4 +1,4 @@
-import React from 'react';
+import styles from './TimeCircle.module.css';
 
 export default function TimeCircle(props) {
     const isWork = props.isWork;
@@ -14,15 +14,15 @@ export default function TimeCircle(props) {
     };
 
     return (
-        <div className="set-timer">
-            <div className="time-circle-outer">
+        <div className={styles.setTimer}>
+            <div className={styles.outer}>
                 <div
-                    className="time-circle-inner"
+                    className={styles.inner}
                     style={{
                         backgroundColor: isWork ? 'green' : 'red',
                     }}
                 >
-                    <div className="set-time-remaining">
+                    <div className={styles.setTime}>
                         {timeStringSec(currentSetDuration - setTimer)}
                     </div>
                 </div>
@@ -32,6 +32,7 @@ export default function TimeCircle(props) {
                 version="1.1"
                 width="200px"
                 height="200px"
+                className={styles.svg}
                 style={{
                     strokeDashoffset: (percentComplete * 565) / 100,
                 }}
@@ -42,7 +43,13 @@ export default function TimeCircle(props) {
                         <stop offset="100%" stopColor="orange" />
                     </linearGradient>
                 </defs>
-                <circle cx="100" cy="100" r="90" strokeLinecap="round" />
+                <circle
+                    className={styles.circle}
+                    cx="100"
+                    cy="100"
+                    r="90"
+                    strokeLinecap="round"
+                />
             </svg>
         </div>
     );

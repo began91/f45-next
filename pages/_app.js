@@ -1,5 +1,6 @@
 import '../styles/globals.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getWorkoutByDate } from '../src/helpers/lists';
 
 // Data Prototypes
 
@@ -57,7 +58,26 @@ Date.prototype.getWeekNumber = function () {
 
 function MyApp({ Component, pageProps }) {
     const useDate = useState(new Date());
-    return <Component {...pageProps} useDate={useDate} />;
+    const useWorkout = useState(getWorkoutByDate(useDate[0]));
+
+    const [snd, setSnd] = useState(null);
+
+    useEffect(() => {
+        setSnd(
+            new Audio(
+                'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'
+            )
+        );
+    }, []);
+
+    return (
+        <Component
+            {...pageProps}
+            useDate={useDate}
+            useWorkout={useWorkout}
+            snd={snd}
+        />
+    );
 }
 
 export default MyApp;

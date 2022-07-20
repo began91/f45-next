@@ -1,0 +1,17 @@
+.controls {
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
+}
+
+.pause {
+    font-size: 40px;
+    background-color: rgba(255,255,255,0.5);
+    border: 1px outset rgba(255,255,255,0.5);
+    border-radius: 50%;
+    padding: 10px;
+    padding-top: 0px;
+}

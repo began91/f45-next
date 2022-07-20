@@ -6,8 +6,11 @@ import styles from '../styles/daily.module.css';
 import utilStyles from '../styles/utils.module.css';
 import cn from 'classnames';
 
-export default function daily({ useDate: [date, setDate] }) {
-    const workout = getWorkoutByDate(date);
+export default function daily({
+    useDate: [date, setDate],
+    useWorkout: [workout, setWorkout],
+}) {
+    setWorkout(getWorkoutByDate(date));
     const workoutInfo = [
         'displayStyle',
         'stations',

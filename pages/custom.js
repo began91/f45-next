@@ -9,9 +9,10 @@ import CreateWorkout from '../src/helpers/CreateWorkout';
 import utilStyles from '../styles/utils.module.css';
 import styles from '../styles/custom.module.css';
 import cn from 'classnames';
+import Link from 'next/link';
 
-export default function custom({ useDate: [date, setDate] }) {
-    const [workout, setWorkout] = useState(getWorkoutByDate(date));
+export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
+    // const [workout, setWorkout] = useState(getWorkoutByDate(date));
 
     const workoutInfo = [
         'stations',
@@ -153,6 +154,9 @@ export default function custom({ useDate: [date, setDate] }) {
                         </li>
                     ))}
             </ol>
+            <Link href="/workout">
+                <button onClick={() => snd.play()}>Start Workout</button>
+            </Link>
         </Layout>
     );
 }

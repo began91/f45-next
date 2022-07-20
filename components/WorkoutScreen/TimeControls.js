@@ -1,4 +1,4 @@
-import React from 'react';
+import styles from './TimeControls.module.css';
 
 export default function TimeControls(props) {
     const workout = props.workout;
@@ -50,24 +50,24 @@ export default function TimeControls(props) {
     };
 
     return (
-        <div className="time-controls">
-            <button className="last-set" onClick={incrementSet} value={-1}>
+        <div className={styles.controls}>
+            <button onClick={incrementSet} value={-1}>
                 Last
                 <br />
                 &#x23EE;
                 <br />
                 Set
             </button>
-            <button className="rewind" onClick={incrementTime} value={-1}>
+            <button onClick={incrementTime} value={-1}>
                 &#x23EA;&#xFE0E; 5s
             </button>
-            <div className="play-pause">
+            <div className={styles.pause}>
                 {isActive ? <>&#x23F8;</> : <>&#x23F5;</>}
             </div>
-            <button className="fast-forward" onClick={incrementTime} value={1}>
+            <button onClick={incrementTime} value={1}>
                 5s &#x23E9;&#xFE0E;
             </button>
-            <button className="next-set" onClick={incrementSet} value={1}>
+            <button onClick={incrementSet} value={1}>
                 Next
                 <br />
                 &#x23ED;

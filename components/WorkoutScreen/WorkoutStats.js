@@ -1,4 +1,5 @@
-import React from 'react';
+import Link from 'next/link';
+import styles from './WorkoutStats.module.css';
 
 export default function WorkoutStats(props) {
     const timeString = seconds => {
@@ -8,15 +9,15 @@ export default function WorkoutStats(props) {
     };
 
     return (
-        <div className="workout-stats">
+        <div className={styles.container}>
             Workout Complete!
             <br />
             Total Time: {timeString(props.mainTimer)}
             <br />
             <button onClick={props.resetWorkout}>Reset Workout</button>
-            <button onClick={() => props.setWorkoutStatus(false)}>
-                Return to Menu
-            </button>
+            <Link href="/">
+                <button>Return to Menu</button>
+            </Link>
         </div>
     );
 }

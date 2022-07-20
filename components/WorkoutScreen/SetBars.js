@@ -1,4 +1,5 @@
-import React from 'react';
+import styles from './SetBars.module.css';
+import cn from 'classnames';
 
 export default function SetBars(props) {
     const [currentSet, setCurrentSet] = props.useCurrentSet;
@@ -27,9 +28,14 @@ export default function SetBars(props) {
             }
 
             const isComplete = i < currentSet;
+
             return sI < workout.stations ? (
                 <div
-                    className={`set-bar2-${isComplete} current-${isCurrentSet}`}
+                    className={cn(styles.setBar, {
+                        [styles.complete]: isComplete,
+                        // [styles.currentSet]: isCurrentSet,
+                    })}
+                    // `set-bar2-${isComplete} current-${isCurrentSet}`}
                     key={i}
                     onClick={() => goToSet(i)}
                     style={style}
@@ -41,15 +47,15 @@ export default function SetBars(props) {
         .filter(result => result !== '');
 
     return (
-        <div className="set-container">
-            <div className="set-counter">
+        <div className={styles.setContainer}>
+            <div>
                 Set:{' '}
                 {displayCurrentSet >= setBars.length
                     ? setBars.length
                     : displayCurrentSet + 1}
                 /{setBars.length}
             </div>
-            <div className="set-bars">{setBars}</div>
+            <div className={styles.setBars}>{setBars}</div>
         </div>
     );
 }

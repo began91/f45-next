@@ -1,4 +1,4 @@
-import React from 'react';
+import styles from './Timers.module.css';
 
 export default function Timers(props) {
     const timeString = seconds => {
@@ -17,9 +17,11 @@ export default function Timers(props) {
         );
 
     return (
-        <div id="timers">
-            <div id="elapsed-timer">Elapsed: {timeString(props.mainTimer)}</div>
-            <div id="remaining-timer">
+        <div>
+            <div className={`${styles.timer} ${styles.left}`}>
+                Elapsed: {timeString(props.mainTimer)}
+            </div>
+            <div className={`${styles.timer} ${styles.right}`}>
                 Remaining: {timeString(props.isComplete ? 0 : remainingTime)}
             </div>
         </div>

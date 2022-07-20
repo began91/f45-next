@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import styles from './ExitMenu.module.css';
+import cn from 'classnames';
 
 export default function ExitMenu(props) {
     const [pendingClose, setPendingClose] = useState(false);
 
     return (
-        <div className={`exit-container closing-${pendingClose}`}>
+        <div
+            className={cn(styles.container, { [styles.closing]: pendingClose })}
+        >
             {pendingClose ? (
                 <>
                     End Workout?
                     <div
                         onClick={() => setPendingClose(false)}
-                        id="resume-workout"
+                        className={cn(styles.resume, styles.button)}
                     >
                         Resume
                     </div>
@@ -19,13 +23,16 @@ export default function ExitMenu(props) {
                             props.endWorkout();
                             setPendingClose(false);
                         }}
-                        id="stop-workout"
+                        className={cn(styles.end, styles.button)}
                     >
                         End
                     </div>
                 </>
             ) : (
-                <div onClick={() => setPendingClose(true)} id="end-workout">
+                <div
+                    onClick={() => setPendingClose(true)}
+                    className={styles.exit}
+                >
                     &#x2715;
                 </div>
             )}

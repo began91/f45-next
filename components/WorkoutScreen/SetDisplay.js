@@ -1,4 +1,4 @@
-import React from 'react';
+import styles from './SetDisplay.module.css';
 
 export default function SetDisplay(props) {
     const workout = props.workout;
@@ -13,12 +13,9 @@ export default function SetDisplay(props) {
         currentSet === workout.stations ? 'Stay Here: ' : 'Next Station: ';
 
     return isWork ? (
-        <div className="workout-name">{currentStation}</div>
+        <div className={styles.workoutName}>{currentStation}</div>
     ) : (
-        <div className="workout-name">
-            Rest
-            <br />
-            <br />
+        <div className={styles.workoutName}>
             {stayOrMove}
             <br />
             {nextStation}

@@ -1,0 +1,52 @@
+.container {
+    padding: 5px;
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    top: 10px;
+    right: 10px;
+    transition: background-color .5s, color .5s, width .5s, right 0.5s, transform 0.5s;
+    transition-timing-function: ease-in-out;
+    border-radius: 20px;
+    z-index: 20;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255,255,255,0.5);
+    color: black;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+.closing {
+    width: 90%;
+    background-color: rgba(0,0,0,.9);
+    color: white;
+    border: none;
+    height: 40px;
+    right: 50%;
+    transform: translateX(50%);
+    padding: 0;
+}
+
+.exit {
+    margin-bottom: 1px;
+}
+
+.resume {
+    background-color: green;
+    border: 2px outset darkgreen;
+}
+
+.end {
+    background-color: red;
+    border: 2px outset darkred;
+
+}
+
+.button {
+    /* height: 26px; */
+    color: white;
+    border-radius: 5px;
+    margin: 4px;
+    padding: 0 4px 0 4px;
+}
