@@ -8,7 +8,6 @@ import WorkoutStats from '../components/WorkoutScreen/WorkoutStats';
 import TimeControls from '../components/WorkoutScreen/TimeControls';
 import TimeCircle from '../components/WorkoutScreen/TimeCircle';
 import SetDisplay from '../components/WorkoutScreen/SetDisplay';
-import { useRouter } from 'next/router';
 import cn from 'classnames';
 import Image from 'next/image';
 import logos from '../public/workout-logos/workout-logos';
@@ -23,8 +22,6 @@ export default function WorkoutScreen({
     const [currentSet, setCurrentSet] = useState(0);
     const [setTimer, setSetTimer] = useState(0);
     const [isComplete, setIsComplete] = useState(false);
-
-    // const router = useRouter();
 
     //derivatives of state
     let currentSetDuration = workout.timeList[workout.timeIndex[currentSet]];
