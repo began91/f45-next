@@ -92,7 +92,7 @@ export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
     });
 
     return (
-        <Layout>
+        <Layout page="Custom">
             <h2 className={utilStyles.headingMd}>Create Custom Workout:</h2>
             <label htmlFor="workoutStyle">
                 <b>Workout Style: </b>

@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 
 export default function Home() {
     return (
-        <Layout home>
+        <Layout page="Home">
             <h1 className={utilStyles.headingXL}>
                 Fit 45-Minute Workout Timer
             </h1>

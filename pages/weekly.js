@@ -60,7 +60,7 @@ function WorkoutBrief({ date, setDate }) {
 
 export default function Weekly({ useDate }) {
     return (
-        <Layout>
+        <Layout page="Week">
             <Calendar useDate={useDate} week />
             <WeeklyWorkouts useDate={useDate} />
         </Layout>

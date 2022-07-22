@@ -8,6 +8,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
 
 .backToHome {
@@ -18,4 +19,33 @@
     position: absolute;
     top: 5px;
     left: 5px;
+}
+
+.navList {
+    list-style-type: none;
+    display: flex;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgb(127, 255, 227);
+}
+
+.navItem {
+    padding:  4px 8px;
+    background-color: rgb(127, 255, 227);
+    cursor: pointer;
+    color: black;
+    font-weight: 600;
+
+}
+
+.navItem:hover {
+    background-color:white;
+    color: red;
+}
+
+.currentPage {
+    background-color:rgb(84, 173, 154);
+    font-weight: 700;
 }

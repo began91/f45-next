@@ -33,7 +33,7 @@ export default function daily({
     ];
 
     return (
-        <Layout>
+        <Layout page="Day">
             <div className={styles.infoGrid}>
                 <b className={styles.label}>Date: </b>
                 <div className={cn(styles.info, styles.span3)}>
