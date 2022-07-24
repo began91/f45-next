@@ -16,6 +16,7 @@ function NavBar({ page }) {
                 <Link
                     href={['/', '/schedule', '/weekly', '/daily', '/custom'][i]}
                     className={styles.navLink}
+                    key={i}
                 >
                     <div
                         className={cn(styles.navItem, {
