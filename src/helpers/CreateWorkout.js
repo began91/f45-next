@@ -19,7 +19,35 @@ export default function WorkoutCreator(
     let stationIndex = [];
     let timeIndex = [];
     let logo = images[style] ? images[style] : images['defaultLogo'];
-    const numSets = (sets, stations, laps) => sets * stations * laps * 2 - 1;
+    let numSets = (sets, stations, laps) => sets * stations * laps * 2 - 1;
+
+    function standardStations(stations, pods, laps, sets) {
+        //assumptions:
+        // This calculation assumes a standard workout where pods are evenly split among the stations, laps describes the number of times within a pod, sets describes the number of times at that station each lap.
+        let stationsPerPod = stations / pods;
+        let stationIndex = Array.from(
+            { length: numSets(sets, stations, laps) },
+            (_, i) => {
+                let overallStation = Math.floor(i / (sets * 2));
+                let pod = Math.floor(overallStation / (laps * stationsPerPod));
+                let stationWithinPod = overallStation % stationsPerPod;
+                let station = stationWithinPod + pod * stationsPerPod;
+
+                station = i % 2 === 1 ? stations : station;
+                station =
+                    i % (sets * 2) === sets * 2 - 1 ? stations + 1 : station;
+                return station;
+            }
+        );
+        // time index assumes the time for each station is constant and does not change with pods or laps. The time should be explicit within the timeList for each set and rest within the station. (eg, [20,10,20,10] vice [20,10])
+        let timeIndex = Array.from(
+            { length: numSets(sets, stations, laps) },
+            (_, i) => {
+                return i % (sets * 2);
+            }
+        );
+        return [stationIndex, timeIndex];
+    }
 
     switch (workoutStyle) {
         case 'Abacus':
@@ -28,7 +56,7 @@ export default function WorkoutCreator(
             laps = 2;
             sets = 5;
             timing =
-                'Lap1 - 20/10, 22/10, 24/10, 26/10, 28/15; Lap 2 - 28/10, 26/10, 24/10, 22/10, 20/15';
+                'Lap1 - 20/10, 22/10, 24/10, 26/10, 28/15; Lap 2 - 28/10, 26/10, 24/10, 22/10, 20/15'; //timing changes per lap, no standard calc
             misc = 'No water breaks';
             timeList = [20, 10, 22, 10, 24, 10, 26, 10, 28, 10];
             for (let i = 0; i < numSets(sets, stations, laps); i++) {
@@ -54,7 +82,7 @@ export default function WorkoutCreator(
             pods = 1;
             laps = 3;
             sets = 1;
-            timing = '3 Laps: 60/30 60/30 30/20';
+            timing = '3 Laps: 60/30 60/30 30/20'; // timing changes with laps, no standard timing
             timeList = [60, 30, 60, 30, 30, 20];
             misc =
                 'Combo stations. Left exercise reps: 10-9-8-... with one rep of the right workout in between';
@@ -73,6 +101,30 @@ export default function WorkoutCreator(
                     timeIndex[i] = 2 * lap + 1;
                 }
             }
+            break;
+        case 'Athletica':
+            // either 45/15 1 set 4 laps OR 20/10 4 sets 2 laps
+            stations = 9;
+            pods = 3;
+            laps = 2;
+            sets = 4;
+            timing = '20/10';
+            misc = '2 laps per pod of 3 stations before moving to next pod';
+            timeList = [20, 10, 20, 10, 20, 10, 20, 10];
+            //Standard stations
+            // for (let i = 0; i < numSets(sets, stations, laps); i++) {
+            //     timeIndex[i] = i % 2;
+            //     if (i % 2 === 0) {
+            //         //work
+            //         stationIndex[i] = Math.floor(i / (sets * 2));
+            //     } else if (i % (sets * 2) === sets * 2 - 1) {
+            //         //next station
+            //         stationIndex[i] = stations + 1;
+            //     } else {
+            //         //stay here
+            //         stationIndex[i] = stations;
+            //     }
+            // }
             break;
         case 'Bears':
             stations = 18;
@@ -123,6 +175,26 @@ export default function WorkoutCreator(
                 }
             }
             break;
+        case 'Miaminights':
+        case 'Miami Nights':
+            displayStyle = 'Miami Nights';
+            stations = 12;
+            pods = 3;
+            laps = 3;
+            sets = 1;
+            timing = '40/20';
+            timeList = [40, 20];
+            //standard timing
+            break;
+        case 'Mkatz':
+            stations = 9;
+            pods = 1;
+            laps = 2;
+            sets = 3;
+            timing = '35/10 20/10 20/20';
+            misc = 'Finish with a 2 minute plank at the end!';
+            timeList = [35, 10, 20, 10, 20, 20];
+            break;
         case 'Pegasus':
             stations = 15;
             pods = 1;
@@ -166,6 +238,27 @@ export default function WorkoutCreator(
                 }
             }
             break;
+        case 'Redline':
+            stations = 9;
+            pods = 1;
+            laps = 1;
+            sets = 5;
+            timing = '20/5 30/5 40/5 50/5 60/20';
+            misc = 'No water breaks';
+            timeList = [20, 5, 30, 5, 40, 5, 50, 5, 60, 20];
+            // for (let i = 0; i < numSets(sets, stations, laps); i++) {
+            //     timeIndex[i] = i % (sets * 2);
+            //     if (i % 2 === 0) {
+            //         // work sets
+            //         stationIndex[i] = Math.floor(i / (sets * 2));
+            //     } else if (i % (sets * 2) === 9) {
+            //         //next station
+            //         stationIndex[i] = stations + 1;
+            //     } else {
+            //         stationIndex[i] = stations;
+            //     }
+            // }
+            break;
         case 'Romans':
             stations = 9;
             pods = 3;
@@ -204,6 +297,33 @@ export default function WorkoutCreator(
                     // stationIndex[i] = stations+1;//might change to +2 and add "next pod" later
                 }
             }
+            break;
+        case 'Specialopshollywood':
+        case 'Special Ops Hollywood':
+            displayStyle = 'Special Ops Hollywood';
+            stations = 13;
+            pods = 2;
+            laps = 3;
+            sets = 2;
+            timing = 'Lap 1: 20/10 20/10, Lap 2: 40/20, Lap 3: 60/30';
+            misc =
+                '4 minute AMRAP of last 3 exercises at end of each pod with 60 sec break';
+            timeList = [20, 10, 40, 20, 60, 30, 4 * 60];
+            stationIndex = [
+                0, 13, 0, 14, 1, 13, 1, 14, 2, 13, 2, 14, 3, 13, 3, 14, 4, 13,
+                4, 14, 5, 13, 5, 14, 0, 14, 1, 14, 2, 14, 3, 14, 4, 14, 5, 14,
+                0, 14, 1, 14, 2, 14, 3, 14, 4, 14, 4, 14, 12, 14, 6, 13, 6, 14,
+                7, 13, 7, 14, 8, 13, 8, 14, 9, 13, 9, 14, 10, 13, 10, 14, 11,
+                13, 11, 14, 6, 14, 7, 14, 8, 14, 9, 14, 10, 14, 11, 14, 6, 14,
+                7, 14, 8, 14, 9, 14, 10, 14, 11, 14, 12,
+            ];
+            timeIndex = [
+                0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+                1, 0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 4, 5, 4, 5, 4, 5,
+                4, 5, 4, 5, 4, 5, 6, 4, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+                1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
+                2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6,
+            ];
             break;
         case 'T10':
             stations = 10;
@@ -258,6 +378,31 @@ export default function WorkoutCreator(
                 if (i % 2 === 0) {
                     stationIndex[i] = Math.floor(i / 2) % stations; //changed this to 14 instead of 12
                 } else {
+                    stationIndex[i] = stations + 1;
+                }
+            }
+            break;
+        case 'Thenines':
+        case 'The Nines':
+            displayStyle = 'The Nines';
+            stations = 9;
+            pods = 1;
+            laps = 2;
+            sets = 2;
+            timing = '45/15 45/20';
+            misc =
+                '9 reps of primary exercise, then 9 reps secondary exercise. Increase resistance if you make it through with extra time.';
+            timeList = [45, 15, 45, 20];
+            for (let i = 0; i < numSets(sets, stations, laps); i++) {
+                timeIndex[i] = i % (sets * 2);
+                if (i % 2 === 0) {
+                    //work sets
+                    stationIndex[i] = Math.floor(i / (sets * 2)) % stations;
+                } else if (i % 4 === 1) {
+                    //stay here
+                    stationIndex[i] = stations;
+                } else {
+                    //next station
                     stationIndex[i] = stations + 1;
                 }
             }
@@ -334,8 +479,26 @@ export default function WorkoutCreator(
                 }
             }
             break;
+        case 'Wingman':
+            stations = 18;
+            pods = 1;
+            laps = 1;
+            sets = 2;
+            timing = '35/25';
+            timeList = [35, 25, 35, 25];
         default:
             break;
+    }
+
+    //if station or time index hasnt been set, assume standard
+    let [sI, tI] = standardStations(stations, pods, laps, sets);
+
+    if (stationIndex.length === 0) {
+        stationIndex = sI;
+    }
+
+    if (timeIndex.length === 0) {
+        timeIndex = tI;
     }
 
     for (let i = stationList.length; i < stations; i++) {

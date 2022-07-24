@@ -41,9 +41,11 @@ import Renegade from './renegade.png';
 import Romans from './romans.png';
 import Socal from './socal.jpg';
 import Soho from './soho.png';
+import Specialopshollywood from './specialopshollywood.jpg';
 import T10 from './t10.png';
 import Tempest from './tempest.jpg';
 import Templars from './templars.png';
+import Thenines from './thenines.jpg';
 import Tokyodisco from './tokyodisco.png';
 import Trackstars from './trackstars.png';
 import Tripledouble from './tripledouble.png';
@@ -96,9 +98,11 @@ const images = {
     Romans,
     Socal,
     Soho,
+    Specialopshollywood,
     T10,
     Tempest,
     Templars,
+    Thenines,
     Tokyodisco,
     Trackstars,
     Tripledouble,
