@@ -150,6 +150,17 @@ export default function WorkoutCreator(
                 }
             }
             break;
+        case 'Heroeshollywood':
+        case 'Heroes Hollywood':
+            displayStyle = 'Heroes Hollywood';
+            stations = 18;
+            pods = 1;
+            laps = 3;
+            sets = 1;
+            timing = '40/15';
+            misc = 'Two people on each TV';
+            timeList = [40, 15];
+            break;
         case 'Lonestar':
             stations = 12;
             pods = 1;

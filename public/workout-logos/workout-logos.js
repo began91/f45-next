@@ -16,7 +16,7 @@ import Firestorm from './firestorm.png';
 import Foxtrot from './foxtrot.png';
 import G from './g.png';
 import Goat from './goat.png';
-import Heroes from './heroes.jpg';
+import Heroeshollywood from './heroes.jpg';
 import Hollywood from './hollywood.png';
 import Iceberg from './iceberg.jpg';
 import Joker from './joker.jpg';
@@ -73,7 +73,7 @@ const images = {
     Foxtrot,
     G,
     Goat,
-    Heroes,
+    Heroeshollywood,
     Hollywood,
     Iceberg,
     Joker,
