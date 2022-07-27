@@ -3,13 +3,45 @@ import Image from 'next/image';
 import Head from 'next/head';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
-import logos from '../public/workout-logos/workout-logos';
+// import logos from '../public/workout-logos/workout-logos';
 import cn from 'classnames';
+import { useSession } from 'next-auth/react';
 
 const name = 'Fit 45-Minute Workout Timer';
 export const siteTitle = 'Fit 45-Minute Workout Timer';
 
 function NavBar({ page }) {
+    const { data: session, status } = useSession();
+
+    let auth;
+
+    if (status === 'authenticated') {
+        const { user } = session;
+        auth = (
+            <Link href="/profile" className={styles.navLink}>
+                <div className={styles.navItem}>
+                    Profile{' '}
+                    <div
+                        style={{
+                            display: 'inline-block',
+                            position: 'relative',
+                            width: '20px',
+                            height: '20px',
+                        }}
+                    >
+                        <Image src={user.image} layout="fill" />
+                    </div>
+                </div>
+            </Link>
+        );
+    } else if (page !== 'auth') {
+        auth = (
+            <Link href="/api/auth/signin" className={styles.navLink}>
+                <div className={styles.navItem}>Login</div>
+            </Link>
+        );
+    }
+
     return (
         <nav className={styles.navList}>
             {['Home', 'Month', 'Week', 'Day', 'Custom'].map((title, i) => (
@@ -27,6 +59,7 @@ function NavBar({ page }) {
                     </div>
                 </Link>
             ))}
+            {auth}
         </nav>
     );
 }

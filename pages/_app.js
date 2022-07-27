@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import { useState, useEffect } from 'react';
 import { getWorkoutByDate } from '../src/helpers/lists';
+import { SessionProvider } from 'next-auth/react';
 
 // Data Prototypes
 
@@ -69,14 +70,18 @@ function MyApp({ Component, pageProps }) {
             )
         );
     }, []);
+    console.log('session:');
+    console.log(pageProps.session);
 
     return (
-        <Component
-            {...pageProps}
-            useDate={useDate}
-            useWorkout={useWorkout}
-            snd={snd}
-        />
+        <SessionProvider session={pageProps.session}>
+            <Component
+                {...pageProps}
+                useDate={useDate}
+                useWorkout={useWorkout}
+                snd={snd}
+            />
+        </SessionProvider>
     );
 }
 
