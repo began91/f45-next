@@ -1,16 +1,12 @@
 import React from 'react';
-import Layout from '../components/Layout';
-import Link from 'next/link';
-import { getWorkoutByDate } from '../src/helpers/lists';
-import styles from '../styles/daily.module.css';
-import utilStyles from '../styles/utils.module.css';
+import Layout from 'components/Layout';
+// import { connectToDatabase } from 'lib/mongodb';
+import CreateWorkout from 'src/helpers/CreateWorkout';
+import styles from 'styles/daily.module.css';
 import cn from 'classnames';
+import Link from 'next/link';
 
-export default function daily({
-    useDate: [date, setDate],
-    useWorkout: [workout, setWorkout],
-}) {
-    setWorkout(getWorkoutByDate(date));
+export default function daily({ workout }) {
     const workoutInfo = [
         'displayStyle',
         'stations',
@@ -31,6 +27,7 @@ export default function daily({
         'Duration',
         'Misc',
     ];
+    let date = new Date(workout.year, workout.month - 1, workout.date);
 
     return (
         <Layout page="Day">
@@ -77,8 +74,43 @@ export default function daily({
     );
 }
 
-export async function getStaticProps(context) {
+export async function getStaticPaths() {
+    const { getAllWorkoutDates } = require('lib/mongodb');
+    //get dates of all workouts from mongo and return as possible paths
+    let dates = await getAllWorkoutDates();
+    dates = dates.map(date => {
+        const newDate = new Date(date);
+        console.log(newDate);
+        return {
+            params: {
+                year: newDate.getFullYear(),
+            },
+        };
+    });
+    console.log('paths');
+    // console.log(dates);
     return {
-        props: {},
+        paths: [
+            {
+                params: {
+                    date: ['2022', '7', '27'],
+                },
+            },
+        ],
+        fallback: false,
+    };
+}
+
+export async function getStaticProps({ params }) {
+    console.log(typeof Workout);
+    // use date to get workout from mongodb
+    const [year, month, date] = params.date;
+    const { getWorkoutByDate } = require('lib/mongodb');
+    let workout = await getWorkoutByDate(year, month, date);
+    workout = CreateWorkout(2022, 7, 27, 'Bears', []);
+    return {
+        props: {
+            workout,
+        },
     };
 }

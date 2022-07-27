@@ -29,7 +29,7 @@ function NavBar({ page }) {
                             height: '20px',
                         }}
                     >
-                        <Image src={user.image} layout="fill" />
+                        <Image src={user.image} alt="user" layout="fill" />
                     </div>
                 </div>
             </Link>

@@ -29,7 +29,7 @@ export default function Profile({ foo }) {
                         height: '20px',
                     }}
                 >
-                    <Image src={user.image} layout="fill" />
+                    <Image src={user.image} alt="user" layout="fill" />
                 </div>
                 <div>Session Status: {status}</div>
 

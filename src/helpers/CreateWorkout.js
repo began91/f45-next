@@ -3,7 +3,7 @@ import images from '../../public/workout-logos/workout-logos';
 export default function WorkoutCreator(
     year,
     month,
-    day,
+    date,
     workoutStyle,
     stationList = []
 ) {
@@ -527,7 +527,9 @@ export default function WorkoutCreator(
             : new Date(duration * 1000).toISOString().substring(14, 19);
 
     return {
-        date: new Date(year, month - 1, day),
+        year,
+        month,
+        date,
         style,
         displayStyle,
         stations,
@@ -544,8 +546,8 @@ export default function WorkoutCreator(
         setDurationList,
         durationDisplay,
         logo,
-        setStationList: function setStationList(stationList) {
-            this.stationList = stationList;
-        },
+        // setStationList: function setStationList(stationList) {
+        //     this.stationList = stationList;
+        // },
     };
 }

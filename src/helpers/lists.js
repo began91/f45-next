@@ -478,7 +478,12 @@ function getWorkoutByDate(date) {
         yearsMatch(date1, date2);
 
     return (
-        workoutsByDate.find(workout => areDatesEqual(workout.date, date)) || {
+        workoutsByDate.find(workout =>
+            areDatesEqual(
+                new Date(workout.year, workout.month - 1, workout.date),
+                date
+            )
+        ) || {
             date,
         }
     );
