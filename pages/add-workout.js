@@ -8,7 +8,7 @@ import cn from 'classnames';
 import Link from 'next/link';
 import Calendar from 'components/Calendar';
 
-export default function addWorkout() {
+export default function AddWorkout() {
     const [date, setDate] = useState(new Date());
     const [workout, setWorkout] = useState(
         CreateWorkout(
@@ -21,7 +21,7 @@ export default function addWorkout() {
     );
 
     const postWorkout = e => {
-        fetch('/api/workouts', {
+        fetch('/api/workouts/', {
             method: 'POST',
         });
     };
