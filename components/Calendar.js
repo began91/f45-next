@@ -5,7 +5,7 @@ import styles from '../styles/Calendar.module.css';
 import Image from 'next/image';
 import cn from 'classnames';
 
-function Week({ week, month, setDate }) {
+function Week({ week, month, db, setDate }) {
     return (
         <div className={styles.week}>
             {week.map((date, i) => (
@@ -14,18 +14,28 @@ function Week({ week, month, setDate }) {
                     key={i}
                     month={month}
                     setDate={setDate}
+                    db={db}
                 />
             ))}
         </div>
     );
 }
 
-function DaySquare({ date, month, setDate }) {
+function DaySquare({ date, month, setDate, db }) {
     const workout = getWorkoutByDate(date) || {};
     const logo = workout.logo || logos.defaultLogo;
 
+    let href;
+    if (month) {
+        href = '/weekly';
+    } else if (db) {
+        href = '/add-workout';
+    } else {
+        href = '/daily';
+    }
+
     return (
-        <Link href={month ? '/weekly' : '/daily'}>
+        <Link href={href}>
             <div
                 onClick={() => setDate(date)}
                 className={cn(styles.daySquare, {
@@ -50,7 +60,12 @@ function DaySquare({ date, month, setDate }) {
     );
 }
 
-export default function Calendar({ useDate: [date, setDate], month, week }) {
+export default function Calendar({
+    useDate: [date, setDate],
+    month,
+    week,
+    db,
+}) {
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
         (day, i) => (
             <div className={styles.daySquare} key={i}>
@@ -154,7 +169,13 @@ export default function Calendar({ useDate: [date, setDate], month, week }) {
             <Link href="/schedule">{monthRow}</Link>
             <div className={styles.daysOfWeek}>{daysOfWeek}</div>
             {calendar.map((week, i) => (
-                <Week week={week} key={i} month={month} setDate={setDate} />
+                <Week
+                    week={week}
+                    key={i}
+                    month={month}
+                    setDate={setDate}
+                    db={db}
+                />
             ))}
         </div>
     );

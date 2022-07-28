@@ -5,8 +5,10 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
             let bodyObject = JSON.parse(req.body);
-            let newPost = await db.collection('comments').insertOne(bodyObject);
-            res.json(newPost.ops[0]);
+            let newWorkout = await db
+                .collection('workouts')
+                .insertOne(bodyObject);
+            res.json(newWorkout.ops[0]);
             break;
         case 'GET':
             const posts = await db
