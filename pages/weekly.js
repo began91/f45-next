@@ -5,7 +5,7 @@ import styles from '../styles/weekly.module.css';
 import utilStyles from '../styles/utils.module.css';
 import logos from '../public/workout-logos/workout-logos';
 import Image from 'next/image';
-import Link from 'next/link';
+import LinkIf from 'components/LinkIf';
 
 function WeeklyWorkouts({ useDate: [date, setDate] }) {
     return date
@@ -22,9 +22,10 @@ function WeeklyWorkouts({ useDate: [date, setDate] }) {
 
 function WorkoutBrief({ date, setDate }) {
     const workout = getWorkoutByDate(date);
-
+    const isWorkout = workout.stations && true;
+    const datePathString=`/${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
     return (
-        <Link href="/daily">
+        <LinkIf href={"/daily"+datePathString} linkIf={isWorkout}>
             <div
                 className={styles.workout}
                 onClick={() => setDate(date)}
@@ -54,13 +55,13 @@ function WorkoutBrief({ date, setDate }) {
                     )}
                 </div>
             </div>
-        </Link>
+        </LinkIf>
     );
 }
 
 export default function Weekly({ useDate }) {
     return (
-        <Layout page="Week">
+        <Layout page="Week" date={useDate[0]}>
             <Calendar useDate={useDate} week />
             <WeeklyWorkouts useDate={useDate} />
         </Layout>

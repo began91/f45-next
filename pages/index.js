@@ -4,9 +4,9 @@ import Layout, { siteTitle } from '../components/Layout';
 import utilStyles from '../styles/utils.module.css';
 import styles from '../styles/Home.module.css';
 
-export default function Home() {
+export default function Home({useDate: [date,setDate]}) {
     return (
-        <Layout page="Home">
+        <Layout page="Home" date={date}>
             <h1 className={utilStyles.headingXL}>
                 Fit 45-Minute Workout Timer
             </h1>

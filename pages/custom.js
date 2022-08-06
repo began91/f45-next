@@ -10,9 +10,11 @@ import utilStyles from '../styles/utils.module.css';
 import styles from '../styles/custom.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
+import {useSession} from 'next-auth/react';
 
-export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
+export default function Custom({ useDate: [date, setDate],useWorkout: [workout, setWorkout], snd }) {
     // const [workout, setWorkout] = useState(getWorkoutByDate(date));
+    const {data: session, status} = useSession();
 
     const workoutInfo = [
         'stations',
@@ -79,7 +81,33 @@ export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
         setWorkout({ ...workout, stationList: newStationList });
     };
 
-    useEffect(() => {
+    async function startWorkout() {
+        snd.play()
+        let postWorkout = workout;
+        postWorkout.logo = null;
+        if (status === 'authenticated') {
+            const {user} = session;
+            //get the user id? perhaps the user id should be stored in the session. We'll use email for now.
+            postWorkout.user = user.email;
+        }
+        //use the current workout
+        //get the user if authentiicated
+        //post the workout to userWorkouts, referenced to the user._id
+        const response = await fetch('api/userWorkouts',{
+            method: 'POST',
+            body: JSON.stringify(postWorkout),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+
+        const data = await response.json();
+        console.log(data);
+
+        
+    }
+
+    useEffect(() => {//resize textareas to content
         //https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
         const tx = document.getElementsByTagName('textarea');
         for (let i = 0; i < tx.length; i++) {
@@ -92,7 +120,7 @@ export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
     });
 
     return (
-        <Layout page="Custom">
+        <Layout page="Custom" date={date}>
             <h2 className={utilStyles.headingMd}>Create Custom Workout:</h2>
             <label htmlFor="workoutStyle">
                 <b>Workout Style: </b>
@@ -155,7 +183,7 @@ export default function Custom({ useWorkout: [workout, setWorkout], snd }) {
                     ))}
             </ol>
             <Link href="/workout">
-                <button onClick={() => snd.play()}>Start Workout</button>
+                <button onClick={startWorkout}>Start Workout</button>
             </Link>
         </Layout>
     );

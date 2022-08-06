@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from 'components/Layout';
 // import { connectToDatabase } from 'lib/mongodb';
 import CreateWorkout from 'src/helpers/CreateWorkout';
@@ -6,7 +6,13 @@ import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
 
-export default function daily({ workout }) {
+export default function daily({ workout, useWorkout: [oldWorkout,setWorkout], useDate: [date,setDate] }) {
+    
+    useEffect(()=>{
+        setWorkout(workout)
+        setDate(new Date(workout.year,workout.month-1,workout.date));
+    },[workout,setWorkout,setDate])
+    
     const workoutInfo = [
         'displayStyle',
         'stations',
@@ -27,10 +33,9 @@ export default function daily({ workout }) {
         'Duration',
         'Misc',
     ];
-    let date = new Date(workout.year, workout.month - 1, workout.date);
 
     return (
-        <Layout page="Day">
+        <Layout page="Day" date={date}>
             <div className={styles.infoGrid}>
                 <b className={styles.label}>Date: </b>
                 <div className={cn(styles.info, styles.span3)}>
@@ -75,39 +80,42 @@ export default function daily({ workout }) {
 }
 
 export async function getStaticPaths() {
-    const { getAllWorkoutDates } = require('lib/mongodb');
+    const { getAllWorkouts } = require('lib/mongodb');
     //get dates of all workouts from mongo and return as possible paths
-    let dates = await getAllWorkoutDates();
-    dates = dates.map(date => {
-        const newDate = new Date(date);
-        console.log(newDate);
-        return {
+    let workouts = await getAllWorkouts();
+    let paths = workouts.map(workout => {
+        let {year,month,date} = workout;
+                return {
             params: {
-                year: newDate.getFullYear(),
+                date: [`${year}`,`${month}`,`${date}`]
             },
         };
     });
-    console.log('paths');
-    // console.log(dates);
+
+        paths.push({params:{date: ['']}})
     return {
-        paths: [
-            {
-                params: {
-                    date: ['2022', '7', '27'],
-                },
-            },
-        ],
+        paths,
         fallback: false,
     };
 }
 
-export async function getStaticProps({ params }) {
-    console.log(typeof Workout);
+export async function getStaticProps({params}) {
+    // console.log(typeof Workout);
     // use date to get workout from mongodb
-    const [year, month, date] = params.date;
+    //default is today
+    let newDate = new Date();
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth();
+    let date = newDate.getDate();
+    if (params.date) {//if a date was supplied, set that instead
+
+     [year, month, date] = params.date;
+    }
+
+
     const { getWorkoutByDate } = require('lib/mongodb');
     let workout = await getWorkoutByDate(year, month, date);
-    workout = CreateWorkout(2022, 7, 27, 'Bears', []);
+    // workout = CreateWorkout(2022, 7, 27, 'Bears', []);
     return {
         props: {
             workout,

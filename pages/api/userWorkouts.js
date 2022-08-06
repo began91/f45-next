@@ -3,12 +3,9 @@ import { connectToDatabase } from 'lib/mongodb';
 export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     let body = req.body
-    let {year,month,date,style} = body;
+    let {year,month,date,style,stationList} = body;
     switch (req.method) {
         case 'POST':
-            //delete if theres already a workout for that date:
-            await db.collection('workouts').deleteOne({year,month,date})
-
             console.log(`Received Posted workout: Style: ${style} Date:${month}/${date}/${year}`)
             
             await db.collection('archivedWorkouts').insertOne(body);

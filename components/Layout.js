@@ -2,6 +2,7 @@ import styles from './Layout.module.css';
 import Image from 'next/image';
 import Head from 'next/head';
 import utilStyles from '../styles/utils.module.css';
+import LinkIf from 'components/LinkIf';
 import Link from 'next/link';
 // import logos from '../public/workout-logos/workout-logos';
 import cn from 'classnames';
@@ -10,12 +11,14 @@ import { useSession } from 'next-auth/react';
 const name = 'Fit 45-Minute Workout Timer';
 export const siteTitle = 'Fit 45-Minute Workout Timer';
 
-function NavBar({ page }) {
-    const { data: session, status } = useSession();
+function NavBar({ page, date }) {//navbar at top of layout
+if (!date) {throw new Error('Date not supplied to NavBar')}
 
+// get session to check whether user is authenticated (affects display of login or profile link)
+    const { data: session, status } = useSession();
     let auth;
 
-    if (status === 'authenticated') {
+    if (status === 'authenticated') {//link to profile if authenticated
         const { user } = session;
         auth = (
             <Link href="/profile" className={styles.navLink}>
@@ -34,40 +37,49 @@ function NavBar({ page }) {
                 </div>
             </Link>
         );
-    } else if (page !== 'auth') {
+    } else if (page !== 'auth') {//link to auth path if not signed in
         auth = (
             <Link href="/api/auth/signin" className={styles.navLink}>
                 <div className={styles.navItem}>Login</div>
             </Link>
         );
     }
+    //year,month,day to add to daily link
+ let datePathString=`/${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
 
+ //links to iterate over
+ let href = ['/', '/schedule', '/weekly', '/daily'+datePathString, '/custom'];
+let pageNames = ['Home', 'Month', 'Week', 'Day', 'Custom'];
     return (
         <nav className={styles.navList}>
-            {['Home', 'Month', 'Week', 'Day', 'Custom'].map((title, i) => (
-                <Link
-                    href={['/', '/schedule', '/weekly', '/daily', '/custom'][i]}
+            {pageNames.map((title, i) => {
+                //check if current page for css and to disable link
+                const isCurrentPage = page===title;
+                return(
+                <LinkIf
+                    href={href[i]}
                     className={styles.navLink}
+                    linkIf={!isCurrentPage}
                     key={i}
                 >
                     <div
                         className={cn(styles.navItem, {
-                            [styles.currentPage]: page === title,
+                            [styles.currentPage]: isCurrentPage,
                         })}
                     >
                         {title}
                     </div>
-                </Link>
-            ))}
+                </LinkIf>
+            )})}
             {auth}
         </nav>
     );
 }
 
-export default function Layout({ children, page }) {
+export default function Layout({ children, page, date }) {
     return (
         <>
-            <NavBar page={page} />
+            <NavBar page={page} date={date}/>
             <div className={styles.container}>
                 <Head>
                     <link rel="icon" href="/favicon.ico" />

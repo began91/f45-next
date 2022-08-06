@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import CreateWorkout from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
-import { workoutStyleList, getLastWorkoutByStyle } from 'src/helpers/lists';
+import { workoutStyleList, getLastWorkoutByStyle, getWorkoutByDate } from 'src/helpers/lists';
 import cn from 'classnames';
 import Link from 'next/link';
 import Calendar from 'components/Calendar';
@@ -20,11 +20,21 @@ export default function AddWorkout() {
         )
     );
 
-    const postWorkout = e => {
-        fetch('/api/workouts/', {
+    async function postWorkout(e) {
+        e.preventDefault();
+        console.log('Posting workout:')
+        console.log(workout)
+        const response = await fetch('/api/workouts/', {
             method: 'POST',
+            body: JSON.stringify(workout),
+            headers: {
+                "Content-Type": "application/json"
+            }
         });
-    };
+        const data = await response.json();
+        console.log(data)
+
+    }
 
     const workoutInfo = [
         'stations',
@@ -33,6 +43,7 @@ export default function AddWorkout() {
         'sets',
         'timing',
         'durationDisplay',
+        'misc'
     ];
 
     const workoutInfoLabels = [
@@ -42,6 +53,7 @@ export default function AddWorkout() {
         'Sets',
         'Timing',
         'Duration',
+        'Misc'
     ];
 
     function setWorkoutStyle(e) {
@@ -102,6 +114,24 @@ export default function AddWorkout() {
             );
         }
     });
+
+    useEffect(()=>{
+        let newWorkout = getWorkoutByDate(date);
+        if (!newWorkout.stations) {
+            const style = workoutStyleList[0];
+            const lastWorkoutByStyle = getLastWorkoutByStyle(style)
+            newWorkout = CreateWorkout(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                date.getDate(),
+                style,
+                lastWorkoutByStyle.stationList.filter(
+                    (_, i) => i < lastWorkoutByStyle.stations
+                )
+            );
+        }
+        setWorkout(newWorkout);
+    },[date])
 
     return (
         <Layout page="add-workout">

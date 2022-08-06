@@ -1,7 +1,7 @@
 import React from 'react';
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 import Link from 'next/link';
-import { getWorkoutByDate } from '../src/helpers/lists';
+import { getWorkoutByDate } from '../../src/helpers/lists';
 import styles from '../styles/daily.module.css';
 import utilStyles from '../styles/utils.module.css';
 import cn from 'classnames';
@@ -33,7 +33,7 @@ export default function daily({
     ];
 
     return (
-        <Layout page="Day">
+        <Layout page="Day" date={date}>
             <div className={styles.infoGrid}>
                 <b className={styles.label}>Date: </b>
                 <div className={cn(styles.info, styles.span3)}>
@@ -78,7 +78,13 @@ export default function daily({
 }
 
 export async function getStaticProps(context) {
+    console.log('Context in daily:')
+    console.log(context)
     return {
         props: {},
     };
 }
+
+// combined service years and months
+// 4 <FA></FA>
+// 2 Pilots
