@@ -1,27 +1,50 @@
+import { StaticImageData } from 'next/image';
 import images from '../../public/workout-logos/workout-logos';
 
+export interface WorkoutType {
+    year: number,
+    month: number,
+    date: number,
+    style: string,
+    displayStyle: string,
+    stations: number,
+    pods: number,
+    laps: number,
+    sets: number,
+    timing: string,
+    misc: string,
+    timeList: number[],
+    stationList: string[],
+    stationIndex: number[],
+    timeIndex: number[],
+    logo: StaticImageData,
+    numSets: number,
+    setDurationList: number[],
+    durationDisplay: string
+}
+
 export default function WorkoutCreator(
-    year,
-    month,
-    date,
-    workoutStyle,
-    stationList = []
+    year: number,
+    month: number,
+    date: number,
+    workoutStyle: string,
+    stationList: string[] = []
 ) {
     let style = workoutStyle;
     let displayStyle = style;
-    let stations = null;
-    let pods = null;
-    let laps = null;
-    let sets = null;
+    let stations: number = null;
+    let pods: number = null;
+    let laps: number = null;
+    let sets: number = null;
     let timing = '';
     let misc = 'N/A';
-    let timeList = [];
-    let stationIndex = [];
-    let timeIndex = [];
-    let logo = images[style] ? images[style] : images['defaultLogo'];
-    let numSets = (sets, stations, laps) => sets * stations * laps * 2 - 1;
+    let timeList: number[] = [];
+    let stationIndex: number[] = [];
+    let timeIndex: number[] = [];
+    let logo: StaticImageData = images[style] ? images[style] : images['defaultLogo'];
+    let numSets = (sets: number, stations: number, laps: number) => sets * stations * laps * 2 - 1;
 
-    function standardStations(stations, pods, laps, sets) {
+    function standardStations(stations: number, pods: number, laps: number, sets: number) {
         //assumptions:
         // This calculation assumes a standard workout where pods are evenly split among the stations, laps describes the number of times within a pod, sets describes the number of times at that station each lap.
         let stationsPerPod = stations / pods;
@@ -63,7 +86,7 @@ export default function WorkoutCreator(
                 if (i % 2 === 0) {
                     //even is workout block
                     stationIndex[i] = Math.floor(i / 10) % 6; //10 is sets*2 && 6 is stations
-                    if (i < numSets / 2) {
+                    if (i < numSets(sets,stations,laps) / 2) {
                         timeIndex[i] = i % 10;
                     } else {
                         timeIndex[i] = 8 - (i % 10);
@@ -520,7 +543,7 @@ export default function WorkoutCreator(
     stationList.push('Rest-Next Station');
     // stationList.push('Rest-Next Pod'); //Not sure if needed yet. will need to adjust some logic elsewhere that assumes only two things have been added to the workout list.
     let setDurationList = timeIndex.map(tI => timeList[tI]);
-    let duration = setDurationList.reduce((a, b) => +a + +b, [0]);
+    let duration = setDurationList.reduce((a, b) => a + b, 0);
     let durationDisplay =
         duration > 3600
             ? new Date(duration * 1000).toISOString().substring(11, 19)
@@ -549,5 +572,5 @@ export default function WorkoutCreator(
         // setStationList: function setStationList(stationList) {
         //     this.stationList = stationList;
         // },
-    };
+    } as WorkoutType;
 }

@@ -1,10 +1,4 @@
-import Workout from './CreateWorkout.js';
-
-// const workoutStyleList = [// need to populate this list
-//     'Abacus',
-//     'Bears',
-//     'Piston'
-// ];
+import Workout from 'src/helpers/CreateWorkout';
 
 let workoutsByDate = [
     Workout(2022, 7, 3, 'Bears'),
@@ -467,26 +461,21 @@ let workoutStyleList = [
     ...new Set(workoutsByDate.map(workout => workout.displayStyle)),
 ].sort();
 
-function getWorkoutByDate(date) {
-    const datesMatch = (date1, date2) => date1.getDate() === date2.getDate();
-    const monthsMatch = (date1, date2) => date1.getMonth() === date2.getMonth();
-    const yearsMatch = (date1, date2) =>
+function getWorkoutByDate(date: Date) {
+    const datesMatch = (date1: Date, date2: Date) => date1.getDate() === date2.getDate();
+    const monthsMatch = (date1: Date, date2: Date) => date1.getMonth() === date2.getMonth();
+    const yearsMatch = (date1: Date, date2: Date) =>
         date1.getFullYear() === date2.getFullYear();
-    const areDatesEqual = (date1, date2) =>
+    const areDatesEqual = (date1: Date, date2:Date) =>
         datesMatch(date1, date2) &&
         monthsMatch(date1, date2) &&
         yearsMatch(date1, date2);
 
-    return (
-        workoutsByDate.find(workout =>
-            areDatesEqual(
+    return workoutsByDate.find(workout => areDatesEqual(
                 new Date(workout.year, workout.month - 1, workout.date),
                 date
             )
-        ) || {
-            date,
-        }
-    );
+        );
 }
 
 const getLastWorkoutByStyle = displayStyle =>

@@ -5,7 +5,6 @@ import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
 import { workoutStyleList, getLastWorkoutByStyle, getWorkoutByDate } from 'src/helpers/lists';
 import cn from 'classnames';
-import Link from 'next/link';
 import Calendar from 'components/Calendar';
 
 export default function AddWorkout() {
@@ -115,9 +114,9 @@ export default function AddWorkout() {
         }
     });
 
-    useEffect(()=>{
+    useEffect(()=>{//create a workout on the date specified
         let newWorkout = getWorkoutByDate(date);
-        if (!newWorkout.stations) {
+        if (newWorkout) {
             const style = workoutStyleList[0];
             const lastWorkoutByStyle = getLastWorkoutByStyle(style)
             newWorkout = CreateWorkout(
@@ -125,9 +124,7 @@ export default function AddWorkout() {
                 date.getMonth() + 1,
                 date.getDate(),
                 style,
-                lastWorkoutByStyle.stationList.filter(
-                    (_, i) => i < lastWorkoutByStyle.stations
-                )
+                []
             );
         }
         setWorkout(newWorkout);
@@ -178,8 +175,7 @@ export default function AddWorkout() {
                     .map((station, i) => (
                         <li className={styles.station} key={i}>
                             <textarea
-                                type="search"
-                                rows="1"
+                                rows={1}
                                 id={'station_' + i}
                                 value={station}
                                 onChange={handleChange}
@@ -190,7 +186,7 @@ export default function AddWorkout() {
                                 id={'station_' + i}
                                 className={styles.clearStation}
                                 onClick={handleChange}
-                                tabIndex="-1"
+                                tabIndex={-1}
                             >
                                 X
                             </button>

@@ -4,6 +4,7 @@ import LinkIf from 'components/LinkIf';
 import styles from 'components/Calendar.module.css';
 import Image from 'next/image';
 import cn from 'classnames';
+import {WorkoutType} from 'src/helpers/CreateWorkout'
 
 //Calendar outputs a month or week of dates around the date provided in state
 
@@ -25,12 +26,13 @@ function Week({ week, month, db, setDate ,activeDate}) {//row in the calendar
 }
 
 function DaySquare({ date, month, setDate, db , isActiveDate}) {
-    const workout = getWorkoutByDate(date) || {};
-    const logo = workout.logo || logos.defaultLogo;
+    const workout = getWorkoutByDate(date);
+    let isWorkout = !(typeof workout === "undefined");
+   
+    const logo = workout?.logo || logos.defaultLogo;
     const datePathString = `/${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
-    const isWorkout = workout.stations && true;
 
-    let href;//vary link based on current page view
+    let href: string;//vary link based on current page view
     if (month) {
         href = '/weekly';
     } else if (db) {
@@ -48,7 +50,7 @@ function DaySquare({ date, month, setDate, db , isActiveDate}) {
                     [styles.activeDate]: isActiveDate,
                     [styles.noWorkout]: !isWorkout
                 })}
-                title={workout.displayStyle}
+                title={workout?.displayStyle || "No workout"}
             >
                 <div className={styles.logoContainer}>
                     <Image
@@ -73,7 +75,7 @@ export default function Calendar({
     month,//month view
     week,//week view
     db,//db update page
-}) {
+}: {useDate: [date: Date, setDate: React.Dispatch<React.SetStateAction<Date>>], month?: boolean, week?: boolean, db?: boolean}) {
 
 
     // array of arrays of the weeks
@@ -89,7 +91,7 @@ export default function Calendar({
                 )
         );
         //display the month name
-        let monthRow = '';
+        let monthRow;
         if (month) {//for month view, simply display the month of the date in state, including year.
             monthRow = (
                 <div className={styles.monthRow}>
@@ -101,7 +103,7 @@ export default function Calendar({
             );
         } else {//for week view, count the number of days in the month of the first day of the week
             const daysInMonth1 = calendar[0].filter(
-                day => day.getMonth() === calendar[0][0].getMonth()
+                (day: Date) => day.getMonth() === calendar[0][0].getMonth()
             ).length;
             const daysInMonth2 = 7 - daysInMonth1;//the rest of the week is in the net month (maybe 0)
             const yearDisplay = calendar[0].map(//add -YY to string, more customizable than doing in conjunction with later display
