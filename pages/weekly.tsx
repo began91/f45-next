@@ -10,26 +10,26 @@ import LinkIf from 'components/LinkIf';
 function WeeklyWorkouts({ useDate: [date, setDate] }) {
     return date
         .getCalendar()
-        .filter(week =>
+        .filter((week: Date[]) =>
             week.some(
                 day =>
                     day.getDate() === date.getDate() &&
                     day.getMonth() === date.getMonth()
             )
         )[0]
-        .map((day, i) => <WorkoutBrief date={day} setDate={setDate} key={i} />);
+        .map((day:Date, i:number) => <WorkoutBrief date={day} setDate={setDate} key={i} />);
 }
 
 function WorkoutBrief({ date, setDate }) {
     const workout = getWorkoutByDate(date);
-    const isWorkout = workout.stations && true;
+    const isWorkout = (typeof workout !== "undefined")
     const datePathString=`/${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
     return (
-        <LinkIf href={"/daily"+datePathString} linkIf={isWorkout}>
+        <LinkIf href={"/daily"+datePathString} isLink={isWorkout}>
             <div
                 className={styles.workout}
                 onClick={() => setDate(date)}
-                title={workout.displayStyle}
+                title={workout?.displayStyle || "No workout"}
             >
                 <h4 className={utilStyles.headerMd}>
                     {date.toLocaleString(undefined, { weekday: 'long' })}
@@ -37,14 +37,14 @@ function WorkoutBrief({ date, setDate }) {
                 <div className={styles.logoContainer}>
                     <Image
                         priority
-                        src={workout.logo ? workout.logo : logos.defaultLogo}
+                        src={workout?.logo || logos.defaultLogo}
                         layout="responsive"
                         alt="logo"
                         className={styles.logo}
                     />
                 </div>
                 <div className={utilStyles.headerSm}>
-                    {workout.style ? (
+                    {isWorkout ? (
                         <>
                             <b>Style:</b> {workout.displayStyle} <br />
                             <b>Stations:</b> {workout.stations} <br />

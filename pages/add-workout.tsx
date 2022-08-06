@@ -9,15 +9,16 @@ import Calendar from 'components/Calendar';
 
 export default function AddWorkout() {
     const [date, setDate] = useState(new Date());
-    const [workout, setWorkout] = useState(
-        CreateWorkout(
+    
+    //check if workout already exists on date or create new one.
+    let workoutByDate = getWorkoutByDate(date) || CreateWorkout(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
             workoutStyleList[0],
             []
-        )
-    );
+        );
+    const [workout, setWorkout] = useState(workoutByDate);
 
     async function postWorkout(e) {
         e.preventDefault();
@@ -55,7 +56,7 @@ export default function AddWorkout() {
         'Misc'
     ];
 
-    function setWorkoutStyle(e) {
+    function setWorkoutStyle(e) {//when style selected from dropdown, get the last style of that workout and create a workout object on the selected date
         let newDate = new Date();
         let lastWorkoutByStyle = getLastWorkoutByStyle(e.target.value);
         let newWorkout = CreateWorkout(
@@ -70,7 +71,7 @@ export default function AddWorkout() {
         setWorkout(newWorkout);
     }
 
-    const resetAll = e => {
+    const resetAll = e => {//reset all exercise station fields to the most recent workout.
         let lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
         let newWorkout = CreateWorkout(
             date.getFullYear(),
@@ -84,14 +85,14 @@ export default function AddWorkout() {
         setWorkout(newWorkout);
     };
 
-    const clearAll = e => {
+    const clearAll = e => {//set all the stations to empty string except the last two (rest stations)
         let newStationList = workout.stationList.map((station, i) =>
             i < workout.stations ? '' : station
         );
-        setWorkout({ ...workout, stationList: newStationList });
+        setWorkout({ ...workout, stationList: newStationList });//keep everything else about the station the same, only change stationList
     };
 
-    const handleChange = e => {
+    const handleChange = e => {//auto resize text area and update state
         if (e.target.tagName === 'TEXTAREA') {
             e.target.style.height = 'inherit';
             e.target.style.height = +e.target.scrollHeight - 5 + 'px';
@@ -115,20 +116,15 @@ export default function AddWorkout() {
     });
 
     useEffect(()=>{//create a workout on the date specified
-        let newWorkout = getWorkoutByDate(date);
-        if (newWorkout) {
-            const style = workoutStyleList[0];
-            const lastWorkoutByStyle = getLastWorkoutByStyle(style)
-            newWorkout = CreateWorkout(
-                date.getFullYear(),
-                date.getMonth() + 1,
-                date.getDate(),
-                style,
-                []
-            );
-        }
+        const newWorkout = getWorkoutByDate(date) || CreateWorkout(
+            date.getFullYear(),
+            date.getMonth() + 1,
+            date.getDate(),
+            workout.style,
+            []
+        );
         setWorkout(newWorkout);
-    },[date])
+    },[date,setWorkout])
 
     return (
         <Layout page="add-workout" date={date}>
@@ -140,7 +136,7 @@ export default function AddWorkout() {
             <select
                 name="workoutStyle"
                 id="workoutStyle"
-                value={workout.displayStyle}
+                value={workout?.displayStyle || undefined}
                 onChange={setWorkoutStyle}
             >
                 {workoutStyleList.map(workoutStyle => (
