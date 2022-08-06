@@ -134,7 +134,7 @@ export default function AddWorkout() {
     },[date])
 
     return (
-        <Layout page="add-workout">
+        <Layout page="add-workout" date={date}>
             <h2 className={utilStyles.headingMd}>Post Workout to Database:</h2>
             <Calendar useDate={[date, setDate]} week db />
             <label htmlFor="workoutStyle">
