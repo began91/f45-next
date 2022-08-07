@@ -1,3 +1,11 @@
+declare global {
+	interface Date {
+		getWeek(): Date[];
+		getCalendar(): Date[][];
+		getWeekNumber(): number;
+	}
+}
+
 Date.prototype.getWeek = function (this: Date) {
 	const d = new Date(this.getFullYear(), this.getMonth(), this.getDate()); //create new date object
 	let dayNum = d.getDay();
