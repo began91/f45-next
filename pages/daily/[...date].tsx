@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import Layout from 'components/Layout';
 // import { connectToDatabase } from 'lib/mongodb';
-import CreateWorkout from 'src/helpers/CreateWorkout';
+// import CreateWorkout from 'src/helpers/CreateWorkout';
 import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
 
-export default function daily({ workout, useWorkout: [oldWorkout,setWorkout], useDate: [date,setDate] }) {
+export default function daily({ workout, useWorkout: [oldWorkout,setWorkout]}) {
     
     useEffect(()=>{
         setWorkout(workout)
-        setDate(new Date(workout.year,workout.month-1,workout.date));
-    },[workout,setWorkout,setDate])
+    },[workout,setWorkout])
+
+    const date = new Date(workout.year,workout.month-1,workout.date);
     
     const workoutInfo = [
         'displayStyle',
@@ -55,12 +56,13 @@ export default function daily({ workout, useWorkout: [oldWorkout,setWorkout], us
                                 [styles.span3]: ![1, 2, 3, 4].includes(i),
                             })}
                         >
-                            {workout[info]}
+                            {/* {workout[info]} */}
+                            
                         </div>
                     </React.Fragment>
                 ))}
             </div>
-            <b htmlFor="stationList" className={styles.label}>
+            <b className={styles.label}>
                 Exercises:
             </b>
             <ol className={styles.info} id="stationList">
@@ -109,13 +111,12 @@ export async function getStaticProps({params}) {
     let date = newDate.getDate();
     if (params.date) {//if a date was supplied, set that instead
 
-     [year, month, date] = params.date;
+     [year, month, date] = params.date.map((a:string)=>Number(a));
     }
 
 
     const { getWorkoutByDate } = require('lib/mongodb');
-    let workout = await getWorkoutByDate(year, month, date);
-    // workout = CreateWorkout(2022, 7, 27, 'Bears', []);
+    let workout = await getWorkoutByDate(year, month, date,"day");
     return {
         props: {
             workout,

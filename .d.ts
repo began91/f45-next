@@ -1,6 +1,7 @@
 declare global {
     interface Date {
         getWeekNumber(): number,
-        getCalendar(): Date [][]
+        getCalendar(): Date [][],
+        getWeek(): Date[]
     }
 }

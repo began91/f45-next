@@ -1,3 +1,14 @@
+Date.prototype.getWeek = function(this: Date) {
+    const d = new Date(this.getFullYear(),this.getMonth(),this.getDate());//create new date object
+    let dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum); //d is now equal to start of the week.
+    let week: Date[];
+    for (let i=0;i<7;i++) {
+        week[i] = new Date(d.getFullYear(),d.getMonth(),d.getDate()+i)
+    }
+    return week;
+}
+
 Date.prototype.getCalendar = function (this: Date) {
     const d = new Date(this.getFullYear(), this.getMonth(), this.getDate());
     const monthStart = new Date(this.getFullYear(), this.getMonth(), 1);
