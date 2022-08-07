@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, ObjectId, MongoClientOptions } from 'mongodb';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
 // import Workout from 'src/helpers/CreateWorkout.js';
 
@@ -25,10 +25,10 @@ export async function connectToDatabase() {
 		return { client: cachedClient, db: cachedDb };
 	}
 	console.log('connecting to db');
-	const options = {
+	const options: MongoClientOptions = {
 		useUnifiedTopology: true,
 		useNewUrlParser: true,
-	};
+	} as MongoClientOptions;
 	const client = await MongoClient.connect(uri, options);
 	const db = await client.db(dbName);
 
@@ -37,10 +37,10 @@ export async function connectToDatabase() {
 	return { client, db };
 }
 
-const options = {
+const options: MongoClientOptions = {
 	useUnifiedTopology: true,
 	useNewUrlParser: true,
-};
+} as MongoClientOptions;
 let client;
 let clientPromise;
 
