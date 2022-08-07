@@ -87,7 +87,8 @@ export async function getWorkoutByDate( year: number, month: number, date: numbe
 
             const workoutWeek = week.map(async(date:Date)=>await getWorkoutByDate(date.getFullYear(),date.getMonth()+1, date.getDate()))
             
-            return workoutWeek;
+            return Promise.all(workoutWeek)
+            // return workoutWeek;
         case "month":
             const calendar = newDate.getCalendar();
 
@@ -95,7 +96,7 @@ export async function getWorkoutByDate( year: number, month: number, date: numbe
                 return await getWorkoutByDate(week[0].getFullYear(),week[0].getMonth()+1,week[0].getDate(),"week")
             })
 
-            return workoutCalendar;
+            return Promise.all(workoutCalendar);
         default:
             return undefined;
     }
