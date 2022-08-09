@@ -61,7 +61,7 @@ export default function AddWorkout() {
 		'Misc',
 	];
 
-	function setWorkoutStyle(e: React.ChangeEvent<HTMLSelectElement>) {
+	function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
 		//when style selected from dropdown, get the last style of that workout and create a workout object on the selected date
 		const newDate = new Date();
 		const target = e.target as HTMLSelectElement;

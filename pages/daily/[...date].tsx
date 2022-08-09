@@ -16,7 +16,7 @@ interface dailyType {
 
 export default function daily({
 	workout,
-	useWorkout: [oldWorkout, setWorkout],
+	useWorkout: [_, setWorkout],
 }: dailyType) {
 	useEffect(() => {
 		setWorkout(workout);
@@ -66,7 +66,7 @@ export default function daily({
 								[styles.span3]: ![1, 2, 3, 4].includes(i),
 							})}
 						>
-							{workout[info as keyof WorkoutType]}
+							{workout[info]}
 						</div>
 					</React.Fragment>
 				))}
