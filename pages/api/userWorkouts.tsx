@@ -1,5 +1,6 @@
 import { connectToDatabase } from 'lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { WorkoutType } from 'src/helpers/CreateWorkout';
 
 // type Data = {
 //     whateverIsInData: types
@@ -11,7 +12,7 @@ export default async function handler(
 ) {
 	const { db } = await connectToDatabase();
 	let body = req.body;
-	const { year, month, date, style, stationList } = body;
+	const { year, month, date, style } = body;
 	switch (req.method) {
 		case 'POST':
 			console.log(
@@ -19,8 +20,7 @@ export default async function handler(
 			);
 
 			await db.collection('archivedWorkouts').insertOne(body);
-			const newWorkout = await db.collection('workouts').insertOne(body);
-			res.json(newWorkout);
+			res.json(await db.collection('workouts').insertOne(body));
 			break;
 		case 'GET':
 			body = req.body;
@@ -28,12 +28,14 @@ export default async function handler(
 			//     const workout = await db.collection('workouts').findOne({year,month,date})
 			//     res.json({status:200,data:workout})
 			// } else {
-			const workouts = await db
-				.collection('workouts')
-				.find({})
-				.limit(20)
-				.toArray();
-			res.json({ status: 200, data: workouts });
+			res.json({
+				status: 200,
+				data: await db
+					.collection('workouts')
+					.find({})
+					.limit(20)
+					.toArray(),
+			});
 			// }
 			break;
 		default:

@@ -4,16 +4,16 @@ import NextAuth from 'next-auth';
 // import { connectToDatabase } from 'lib/mongodb';
 import clientPromise from 'lib/mongodb2';
 
-import { MongoClient, MongoClientOptions } from 'mongodb';
+// import { MongoClientOptions } from 'mongodb';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import GoogleProvider from 'next-auth/providers/google';
 // import FacebookProvider from 'next-auth/providers/facebook';
 
-const uri: string = process.env.MONGODB_URI as string;
-const options: MongoClientOptions = {
-	useUnifiedTopology: true,
-	useNewUrlParser: true,
-} as MongoClientOptions;
+// const uri: string = process.env.MONGODB_URI as string;
+// const options: MongoClientOptions = {
+// 	useUnifiedTopology: true,
+// 	useNewUrlParser: true,
+// } as MongoClientOptions;
 
 // const client = new MongoClient(uri, options);
 
