@@ -6,6 +6,7 @@ import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { getWorkoutByDate, getAllWorkouts } from 'lib/mongodb';
 
 interface dailyType {
 	workout: WorkoutType;
@@ -88,10 +89,10 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { getAllWorkouts } = require('lib/mongodb');
+	// const { getAllWorkouts } = require('lib/mongodb');
 	//get dates of all workouts from mongo and return as possible paths
 	const workouts = await getAllWorkouts();
-	const paths = workouts.map((workout: WorkoutType) => {
+	const paths = workouts.map((workout) => {
 		const { year, month, date } = workout;
 		return {
 			params: {
@@ -123,8 +124,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		);
 	}
 
-	const { getWorkoutByDate } = require('lib/mongodb');
-	const workout = await getWorkoutByDate(year, month, date, 'day');
+	// const { getWorkoutByDate } = require('lib/mongodb');
+	const workout = await getWorkoutByDate(year, month, date);
 	// console.log(workout)
 	return {
 		props: {

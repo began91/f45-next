@@ -65,7 +65,7 @@ export async function getAllWorkouts() {
 	const { db, client } = await connectToDatabase();
 	const workouts = await db.collection('workouts').find({}).toArray();
 	client.close();
-	return workouts;
+	return Promise.all(workouts);
 }
 
 export async function getWorkoutByDate(
