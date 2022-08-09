@@ -1,12 +1,12 @@
-import { MongoClient, ObjectId, MongoClientOptions } from 'mongodb';
+import { MongoClient, MongoClientOptions, Db, ObjectId } from 'mongodb';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
 // import Workout from 'src/helpers/CreateWorkout.js';
 
-const uri = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_DB;
+const uri = process.env.MONGODB_URI as string;
+const dbName = process.env.MONGODB_DB as string;
 
-let cachedClient = null;
-let cachedDb = null;
+let cachedClient: MongoClient;
+let cachedDb: Db;
 
 if (!uri) {
 	throw new Error(
@@ -25,31 +25,35 @@ export async function connectToDatabase() {
 		return { client: cachedClient, db: cachedDb };
 	}
 	console.log('connecting to db');
-	const options: MongoClientOptions = {
+	const options = {
 		useUnifiedTopology: true,
 		useNewUrlParser: true,
 	} as MongoClientOptions;
 	const client = await MongoClient.connect(uri, options);
-	const db = await client.db(dbName);
+	const db = client.db(dbName);
 
 	cachedClient = client;
 	cachedDb = db;
 	return { client, db };
 }
 
-const options: MongoClientOptions = {
+const options = {
 	useUnifiedTopology: true,
 	useNewUrlParser: true,
 } as MongoClientOptions;
 let client;
 let clientPromise;
 
+let globalWithMongo = global as typeof globalThis & {
+	_mongoClientPromise: Promise<MongoClient>;
+};
+
 if (process.env.NODE_ENV === 'development') {
-	if (!global._mongoClientPromise) {
+	if (!globalWithMongo._mongoClientPromise) {
 		client = new MongoClient(uri, options);
-		global._mongoClientPromise = client.connect();
+		globalWithMongo._mongoClientPromise = client.connect();
 	}
-	clientPromise = global._mongoClientPromise;
+	clientPromise = globalWithMongo._mongoClientPromise;
 } else {
 	client = new MongoClient(uri, options);
 	clientPromise = client.connect();
@@ -67,55 +71,60 @@ export async function getAllWorkouts() {
 export async function getWorkoutByDate(
 	year: number,
 	month: number,
-	date: number,
-	unitOfTime: 'day' | 'week' | 'month' = 'day'
+	date: number
+) {
+	// const newDate = new Date(year, month - 1, date);
+
+	const { db, client } = await connectToDatabase();
+
+	const workout = await db
+		.collection('workouts')
+		.findOne({ year, month, date });
+
+	if (workout) {
+		(await workout)._id = '';
+	}
+
+	client.close();
+	return workout;
+}
+
+export async function getWorkoutByWeek(
+	year: number,
+	month: number,
+	date: number
 ) {
 	const newDate = new Date(year, month - 1, date);
 
-	switch (unitOfTime) {
-		case 'day':
-			const { db, client } = await connectToDatabase();
+	const week = newDate.getWeek();
 
-			const workout = await db
-				.collection('workouts')
-				.findOne({ year, month, date });
+	const workoutWeek = week.map(
+		async (date: Date) =>
+			await getWorkoutByDate(
+				date.getFullYear(),
+				date.getMonth() + 1,
+				date.getDate()
+			)
+	);
 
-			if (workout) {
-				workout._id = '';
-			}
+	return Promise.all(workoutWeek);
+}
 
-			client.close();
-			return workout;
-		case 'week':
-			const week = newDate.getWeek();
-
-			const workoutWeek = week.map(
-				async (date: Date) =>
-					await getWorkoutByDate(
-						date.getFullYear(),
-						date.getMonth() + 1,
-						date.getDate()
-					)
-			);
-
-			return Promise.all(workoutWeek);
-		// return workoutWeek;
-		case 'month':
-			const calendar = newDate.getCalendar();
-
-			const workoutCalendar = calendar.map(async (week: Date[]) => {
-				return await getWorkoutByDate(
-					week[0].getFullYear(),
-					week[0].getMonth() + 1,
-					week[0].getDate(),
-					'week'
-				);
-			});
-
-			return Promise.all(workoutCalendar);
-		default:
-			return undefined;
-	}
+export async function getWorkoutByMonth(
+	year: number,
+	month: number,
+	date: number
+) {
+	const newDate = new Date(year, month - 1, date);
+	const calendar = newDate.getCalendar();
+	const workoutCalendar = calendar.map(async (week: Date[]) => {
+		return getWorkoutByWeek(
+			week[0].getFullYear(),
+			week[0].getMonth() + 1,
+			week[0].getDate()
+		);
+	});
+	return Promise.all(workoutCalendar);
 }
 
 // export async function getWorkoutWeek(year,month,date) {

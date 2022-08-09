@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const useDate = useState(new Date());
 	const useWorkout = useState(getWorkoutByDate(useDate[0]));
 
-	const [snd, setSnd] = useState(null as any as HTMLAudioElement);
+	const [snd, setSnd] = useState(null as unknown as HTMLAudioElement);
 
 	useEffect(() => {
 		setSnd(

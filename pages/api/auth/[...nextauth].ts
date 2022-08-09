@@ -4,10 +4,10 @@ import NextAuth from 'next-auth';
 // import { connectToDatabase } from 'lib/mongodb';
 import clientPromise from 'lib/mongodb2';
 
-import { MongoClient, ObjectId, MongoClientOptions } from 'mongodb';
+import { MongoClient, MongoClientOptions } from 'mongodb';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import GoogleProvider from 'next-auth/providers/google';
-import FacebookProvider from 'next-auth/providers/facebook';
+// import FacebookProvider from 'next-auth/providers/facebook';
 
 const uri: string = process.env.MONGODB_URI as string;
 const options: MongoClientOptions = {
@@ -15,7 +15,7 @@ const options: MongoClientOptions = {
 	useNewUrlParser: true,
 } as MongoClientOptions;
 
-const client = new MongoClient(uri, options);
+// const client = new MongoClient(uri, options);
 
 const authOptions = {
 	session: {

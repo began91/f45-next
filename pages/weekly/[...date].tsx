@@ -6,8 +6,15 @@ import logos from 'public/workout-logos/workout-logos';
 import Image from 'next/image';
 import LinkIf from 'components/LinkIf';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
-function WorkoutBrief({ workout, date, dayOfWeek }) {
+interface WorkoutBriefType {
+	workout: WorkoutType;
+	date: Date;
+	dayOfWeek: number;
+}
+
+function WorkoutBrief({ workout, date, dayOfWeek }: WorkoutBriefType) {
 	const isWorkout = !!workout;
 	const daysOfWeek = [
 		'Sun',
@@ -54,7 +61,14 @@ function WorkoutBrief({ workout, date, dayOfWeek }) {
 	);
 }
 
-export default function Weekly({ week, year, month, date }) {
+interface WeeklyType {
+	week: WorkoutType[];
+	year: number;
+	month: number;
+	date: number;
+}
+
+export default function Weekly({ week, year, month, date }: WeeklyType) {
 	const selectedDate = new Date(year, month - 1, date);
 
 	return (
@@ -72,7 +86,7 @@ export default function Weekly({ week, year, month, date }) {
 	);
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
 	const { getAllWorkouts } = require('lib/mongodb');
 	let workouts = await getAllWorkouts();
 	let paths = workouts.map((workout: WorkoutType) => {
@@ -90,19 +104,19 @@ export async function getStaticPaths() {
 		paths,
 		fallback: false,
 	};
-}
+};
 
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
 	let newDate = new Date(); //default is today if no date is specified
 	let year = newDate.getFullYear();
 	let month = newDate.getMonth();
 	let date = newDate.getDate();
-	if (params.date) {
-		[year, month, date] = params.date.map((a: string) => Number(a));
+	if (params?.date) {
+		[year, month, date] = params.date.map((a: string) => Number(a)); //change to three separate params [year]/[month]/[date]
 	}
 
-	const { getWorkoutByDate } = require('lib/mongodb');
-	let week = await getWorkoutByDate(year, month, date, 'week');
+	const { getWorkoutByWeek } = require('lib/mongodb');
+	const week = await getWorkoutByWeek(year, month, date);
 
 	return {
 		props: {
@@ -112,4 +126,4 @@ export async function getStaticProps({ params }) {
 			date,
 		},
 	};
-}
+};

@@ -1,34 +1,42 @@
 import { connectToDatabase } from 'lib/mongodb';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
-    const { db } = await connectToDatabase();
-    let body = req.body
-    let {year,month,date,style,stationList} = body;
-    switch (req.method) {
-        case 'POST':
-            console.log(`Received Posted workout: Style: ${style} Date:${month}/${date}/${year}`)
-            
-            await db.collection('archivedWorkouts').insertOne(body);
-            let newWorkout = await db
-                .collection('workouts')
-                .insertOne(body);
-            res.json(newWorkout);
-            break;
-        case 'GET':
-            body = req.body;
-            // if (year && month && date) {
-            //     const workout = await db.collection('workouts').findOne({year,month,date})
-            //     res.json({status:200,data:workout})
-            // } else {
-                const workouts = await db
-                .collection('workouts')
-                .find({})
-                .limit(20)
-                .toArray();
-                res.json({ status: 200, data: workouts });
-            // }
-            break;
-        default:
-            break;
-    }
+// type Data = {
+//     whateverIsInData: types
+// }
+
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
+	const { db } = await connectToDatabase();
+	let body = req.body;
+	const { year, month, date, style, stationList } = body;
+	switch (req.method) {
+		case 'POST':
+			console.log(
+				`Received Posted workout: Style: ${style} Date:${month}/${date}/${year}`
+			);
+
+			await db.collection('archivedWorkouts').insertOne(body);
+			const newWorkout = await db.collection('workouts').insertOne(body);
+			res.json(newWorkout);
+			break;
+		case 'GET':
+			body = req.body;
+			// if (year && month && date) {
+			//     const workout = await db.collection('workouts').findOne({year,month,date})
+			//     res.json({status:200,data:workout})
+			// } else {
+			const workouts = await db
+				.collection('workouts')
+				.find({})
+				.limit(20)
+				.toArray();
+			res.json({ status: 200, data: workouts });
+			// }
+			break;
+		default:
+			break;
+	}
 }
