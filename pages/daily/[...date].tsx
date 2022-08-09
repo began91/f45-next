@@ -15,10 +15,8 @@ interface dailyType {
 	];
 }
 
-export default function daily({
-	workout,
-	useWorkout: [_, setWorkout],
-}: dailyType) {
+export default function Daily({ workout, useWorkout }: dailyType) {
+	const setWorkout = useWorkout[1];
 	useEffect(() => {
 		setWorkout(workout);
 	}, [workout, setWorkout]);
