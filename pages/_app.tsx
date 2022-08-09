@@ -3,14 +3,15 @@ import { useState, useEffect } from 'react';
 import { getWorkoutByDate } from '../src/helpers/lists';
 import { SessionProvider } from 'next-auth/react';
 import 'src/helpers/date.extensions';
+import type { AppProps } from 'next/app';
 
 // Data Prototypes
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
 	const useDate = useState(new Date());
 	const useWorkout = useState(getWorkoutByDate(useDate[0]));
 
-	const [snd, setSnd] = useState(null);
+	const [snd, setSnd] = useState(null as any as HTMLAudioElement);
 
 	useEffect(() => {
 		setSnd(
