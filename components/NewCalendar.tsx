@@ -52,7 +52,7 @@ function Week({ week, month, db, activeDate }: WeekType) {
 				<DaySquare
 					workout={workout}
 					key={i}
-					month={month}
+					month={!!month}
 					db={db}
 					isActiveDate={
 						workout.month - 1 === activeDate.getMonth() &&
@@ -138,6 +138,8 @@ export default function NewCalendar({
 }) {
 	//display the month name
 	let monthRow: ReactElement;
+	let calendarGrid: ReactElement | ReactElement[];
+
 	if (!!month) {
 		//for month view, simply display the month of the date in state, including year.
 		monthRow = (
@@ -148,7 +150,10 @@ export default function NewCalendar({
 				})}
 			</div>
 		);
-	} else {
+		calendarGrid = month.map((week, i) => (
+			<Week week={week} key={i} month db={!!db} activeDate={date} />
+		));
+	} else if (!!week) {
 		//for week view, count the number of days in the month of the first day of the week
 		const daysInMonth1 = week.filter(
 			(workout: WorkoutType) => workout.month === week[0].month
@@ -198,6 +203,13 @@ export default function NewCalendar({
 					</div>
 				</div>
 			);
+		calendarGrid = (
+			<Week week={week} db={!!db} month={!!month} activeDate={date} />
+		);
+	} else {
+		throw new Error(
+			'Week or Month must be specified to Calendar component.'
+		);
 	}
 
 	// weekday name header row
@@ -250,13 +262,7 @@ export default function NewCalendar({
 				{monthRow}
 			</LinkIf>
 			<div className={styles.daysOfWeek}>{daysOfWeek}</div>
-			{!!month ? (
-				month.map((week, i) => (
-					<Week week={week} key={i} month db={db} activeDate={date} />
-				))
-			) : (
-				<Week week={week} db={db} month={!!month} activeDate={date} />
-			)}
+			{calendarGrid}
 		</div>
 	);
 }

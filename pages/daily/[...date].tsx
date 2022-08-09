@@ -1,15 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import Layout from 'components/Layout';
 // import { connectToDatabase } from 'lib/mongodb';
-// import CreateWorkout from 'src/helpers/CreateWorkout';
+import { WorkoutType } from 'src/helpers/CreateWorkout';
 import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
 
+interface dailyType {
+	workout: WorkoutType;
+	useWorkout: [
+		WorkoutType,
+		Dispatch<SetStateAction<WorkoutType | undefined>>
+	];
+}
+
 export default function daily({
 	workout,
 	useWorkout: [oldWorkout, setWorkout],
-}) {
+}: dailyType) {
 	useEffect(() => {
 		setWorkout(workout);
 	}, [workout, setWorkout]);
@@ -58,7 +66,7 @@ export default function daily({
 								[styles.span3]: ![1, 2, 3, 4].includes(i),
 							})}
 						>
-							{workout[info]}
+							{workout[info as keyof WorkoutType]}
 						</div>
 					</React.Fragment>
 				))}
