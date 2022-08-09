@@ -22,6 +22,7 @@ export default function AuthPage() {
 
 	return (
 		<Layout page="auth" date={date}>
+			{isLoading}
 			<Link href="/auth/new-user">
 				<button>New User</button>
 			</Link>

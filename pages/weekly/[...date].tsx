@@ -88,9 +88,9 @@ export default function Weekly({ week, year, month, date }: WeeklyType) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const { getAllWorkouts } = require('lib/mongodb');
-	let workouts = await getAllWorkouts();
-	let paths = workouts.map((workout: WorkoutType) => {
-		let { year, month, date } = workout;
+	const workouts = await getAllWorkouts();
+	const paths = workouts.map((workout: WorkoutType) => {
+		const { year, month, date } = workout;
 		return {
 			params: {
 				date: [String(year), String(month), String(date)],
@@ -107,12 +107,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-	let newDate = new Date(); //default is today if no date is specified
+	const newDate = new Date(); //default is today if no date is specified
 	let year = newDate.getFullYear();
 	let month = newDate.getMonth();
 	let date = newDate.getDate();
 	if (params?.date) {
-		[year, month, date] = params.date.map((a: string) => Number(a)); //change to three separate params [year]/[month]/[date]
+		[year, month, date] = (params.date as string[]).map((a: string) =>
+			Number(a)
+		); //change to three separate params [year]/[month]/[date]
 	}
 
 	const { getWorkoutByWeek } = require('lib/mongodb');

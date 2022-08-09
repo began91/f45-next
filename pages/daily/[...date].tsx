@@ -5,6 +5,7 @@ import { WorkoutType } from 'src/helpers/CreateWorkout';
 import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 interface dailyType {
 	workout: WorkoutType;
@@ -88,12 +89,12 @@ export default function daily({
 	);
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
 	const { getAllWorkouts } = require('lib/mongodb');
 	//get dates of all workouts from mongo and return as possible paths
-	let workouts = await getAllWorkouts();
-	let paths = workouts.map((workout) => {
-		let { year, month, date } = workout;
+	const workouts = await getAllWorkouts();
+	const paths = workouts.map((workout: WorkoutType) => {
+		const { year, month, date } = workout;
 		return {
 			params: {
 				date: [`${year}`, `${month}`, `${date}`],
@@ -106,28 +107,30 @@ export async function getStaticPaths() {
 		paths,
 		fallback: false,
 	};
-}
+};
 
-export async function getStaticProps({ params }) {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
 	// console.log(typeof Workout);
 	// use date to get workout from mongodb
 	//default is today
-	let newDate = new Date();
+	const newDate = new Date();
 	let year = newDate.getFullYear();
 	let month = newDate.getMonth();
 	let date = newDate.getDate();
-	if (params.date) {
+	if (params?.date) {
 		//if a date was supplied, set that instead
 
-		[year, month, date] = params.date.map((a: string) => Number(a));
+		[year, month, date] = (params.date as string[]).map((a: string) =>
+			Number(a)
+		);
 	}
 
 	const { getWorkoutByDate } = require('lib/mongodb');
-	let workout = await getWorkoutByDate(year, month, date, 'day');
+	const workout = await getWorkoutByDate(year, month, date, 'day');
 	// console.log(workout)
 	return {
 		props: {
 			workout,
 		},
 	};
-}
+};

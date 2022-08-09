@@ -1,6 +1,6 @@
 import { connectToDatabase } from 'lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+// import { WorkoutType } from 'src/helpers/CreateWorkout';
 
 // type Data = {
 //     whateverIsInData: types

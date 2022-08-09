@@ -18,12 +18,13 @@ interface CustomType {
 }
 
 export default function Custom({
-	useDate: [date, _],
+	useDate,
 	useWorkout: [workout, setWorkout],
 	snd,
 }: CustomType) {
 	// const [workout, setWorkout] = useState(getWorkoutByDate(date));
 	const { data: session, status } = useSession();
+	const date = useDate[0];
 
 	const workoutInfo = [
 		'stations',
