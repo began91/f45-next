@@ -1,5 +1,6 @@
 import { connectToDatabase } from 'lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import CreateWorkout from 'src/helpers/CreateWorkout';
 
 export default async function handler(
 	req: NextApiRequest,
@@ -7,6 +8,7 @@ export default async function handler(
 ) {
 	const { db } = await connectToDatabase();
 	let body = req.body;
+	console.log(body);
 	const { year, month, date, style } = body;
 	switch (req.method) {
 		case 'POST':
@@ -14,7 +16,7 @@ export default async function handler(
 			await db.collection('workouts').deleteOne({ year, month, date });
 
 			console.log(
-				`Received Posted workout: Style: ${style} Date:${month}/${date}/${year}`
+				`Received Posted workout: Style: ${style} Date: ${month}/${date}/${year}`
 			);
 
 			await db.collection('archivedWorkouts').insertOne(body);
@@ -22,20 +24,28 @@ export default async function handler(
 			break;
 		case 'GET':
 			body = req.body;
-			// if (year && month && date) {
-			//     const workout = await db.collection('workouts').findOne({year,month,date})
-			//     res.json({status:200,data:workout})
-			// } else {
 
 			res.json({
 				status: 200,
 				data: await db
 					.collection('workouts')
 					.find({})
-					.limit(20)
-					.toArray(),
+					// .limit(20)
+					.toArray()
+					.then((data) => {
+						return data.map((workout) => {
+							const { year, month, date, style, stationList } =
+								workout;
+							return CreateWorkout(
+								year,
+								month,
+								date,
+								style,
+								stationList
+							);
+						});
+					}),
 			});
-			// }
 			break;
 		default:
 			break;

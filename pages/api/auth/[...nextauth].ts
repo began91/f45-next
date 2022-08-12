@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth';
-// import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 // import CredentialsProvider from 'next-auth/providers/credentials';
 // import { connectToDatabase } from 'lib/mongodb';
 import clientPromise from 'lib/mongodb2';
@@ -17,7 +17,7 @@ import GoogleProvider from 'next-auth/providers/google';
 
 // const client = new MongoClient(uri, options);
 
-const authOptions = {
+const authOptions: NextAuthOptions = {
 	session: {
 		jwt: true,
 	},

@@ -1,6 +1,6 @@
-import '../styles/globals.css';
+import 'styles/globals.css';
 import { useState, useEffect } from 'react';
-import { getWorkoutByDate } from '../src/helpers/lists';
+import { getWorkoutByDate } from 'src/helpers/lists';
 import { SessionProvider } from 'next-auth/react';
 import 'src/helpers/date.extensions';
 import type { AppProps } from 'next/app';

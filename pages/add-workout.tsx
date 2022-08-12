@@ -1,38 +1,49 @@
 import Layout from 'components/Layout';
 import React, { useState, useEffect } from 'react'; //configure to useRef vice passing events?
-import CreateWorkout from 'src/helpers/CreateWorkout';
+import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
 import {
 	workoutStyleList,
 	getLastWorkoutByStyle,
-	getWorkoutByDate,
+	areDatesEqual,
 } from 'src/helpers/lists';
+// import { getWorkoutByDate } from 'lib/mongodb';
 import cn from 'classnames';
-import Calendar from 'components/Calendar';
+import NewCalendar from 'components/NewCalendar';
+import useSWR from 'swr';
+
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export default function AddWorkout() {
 	const [date, setDate] = useState(new Date());
+	const { data, error } = useSWR('api/workouts', fetcher);
+	if (error) {
+		throw new Error(error);
+	}
 
-	//check if workout already exists on date or create new one.
-	const workoutByDate =
-		getWorkoutByDate(date) ||
-		CreateWorkout(
-			date.getFullYear(),
-			date.getMonth(),
-			date.getDate(),
-			workoutStyleList[0],
-			[]
-		);
-	const [workout, setWorkout] = useState(workoutByDate);
+	let defaultWorkout = CreateWorkout(
+		date.getFullYear(),
+		date.getMonth() + 1,
+		date.getDate(),
+		workoutStyleList[0],
+		[]
+	);
+
+	const [workout, setWorkout] = useState(defaultWorkout);
 
 	async function postWorkout(e: React.MouseEvent<HTMLElement>) {
 		e.preventDefault();
 		console.log('Posting workout:');
 		console.log(workout);
+		const { style, year, month, date } = workout;
+		const stationList = workout.stationList.filter(
+			(_, i) => i < workout.stations
+		);
+		const dbWorkout = { style, year, month, date, stationList };
 		const response = await fetch('/api/workouts/', {
 			method: 'POST',
-			body: JSON.stringify(workout),
+			body: JSON.stringify(dbWorkout),
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -62,18 +73,15 @@ export default function AddWorkout() {
 	];
 
 	function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
-		//when style selected from dropdown, get the last style of that workout and create a workout object on the selected date
-		const newDate = new Date();
+		//when style selected from dropdown, create empty workout of that style on the selected date
 		const target = e.target as HTMLSelectElement;
-		const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
+		// const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
 		const newWorkout = CreateWorkout(
-			newDate.getFullYear(),
-			newDate.getMonth() + 1,
-			newDate.getDate(),
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate(),
 			target.value,
-			lastWorkoutByStyle?.stationList.filter(
-				(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-			) || []
+			[]
 		);
 		setWorkout(newWorkout);
 	}
@@ -132,22 +140,33 @@ export default function AddWorkout() {
 
 	useEffect(() => {
 		//create a workout on the date specified
-		const newWorkout =
-			getWorkoutByDate(date) ||
-			CreateWorkout(
-				date.getFullYear(),
-				date.getMonth() + 1,
-				date.getDate(),
-				workout.style,
-				[]
+		console.log(date);
+		defaultWorkout = CreateWorkout(
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate(),
+			workoutStyleList[0],
+			[]
+		);
+		let workoutByDate = defaultWorkout;
+		if (data) {
+			console.log(data);
+			workoutByDate = data.data.find((workout: WorkoutType) =>
+				areDatesEqual(
+					date,
+					new Date(workout.year, workout.month - 1, workout.date)
+				)
 			);
-		setWorkout(newWorkout);
-	}, [date, setWorkout, workout]);
+		}
+		setWorkout(workoutByDate || defaultWorkout);
+		console.log('Just set workout to:');
+		console.log(workout);
+	}, [date, setWorkout, data]);
 
 	return (
 		<Layout page="add-workout" date={date}>
 			<h2 className={utilStyles.headingMd}>Post Workout to Database:</h2>
-			<Calendar useDate={[date, setDate]} week db />
+			<NewCalendar useDate={[date, setDate]} week db />
 			<label htmlFor="workoutStyle">
 				<b>Workout Style: </b>
 			</label>
