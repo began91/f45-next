@@ -7,6 +7,8 @@ import Image from 'next/image';
 import LinkIf from 'components/LinkIf';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import cn from 'classnames';
 // import { getAllWorkouts } from 'lib/mongodb';
 
 interface WorkoutBriefType {
@@ -24,7 +26,9 @@ function WorkoutBrief({ workout, date }: WorkoutBriefType) {
 	return (
 		<LinkIf href={'/daily' + datePathString} isLink={isWorkout}>
 			<div
-				className={styles.workout}
+				className={cn(styles.workout, {
+					[styles.noWorkout]: !isWorkout,
+				})}
 				title={workout?.displayStyle || 'No workout'}
 			>
 				<h4 className={utilStyles.headerMd}>
@@ -63,20 +67,29 @@ interface WeeklyType {
 export default function Weekly({ weeklyWorkouts, date }: WeeklyType) {
 	// const selectedDate = new Date(year, month - 1, date);
 	date = new Date(date);
+	const calendarWeek = date.getWeek();
 
-	const weekCalendar = date.getWeek();
+	const router = useRouter();
+	if (router.isFallback) {
+		const fallDate = new Date();
+		return (
+			<Layout page="Week" date={fallDate}>
+				Loading...
+			</Layout>
+		);
+	}
 
 	return (
 		<Layout page="Week" date={date}>
 			<NewCalendar
-				weekCalendar={weekCalendar}
+				calendarWeek={calendarWeek}
 				week={weeklyWorkouts}
 				date={date}
 			/>
 			{weeklyWorkouts.map((workout: WorkoutType, i: number) => (
 				<WorkoutBrief
 					workout={workout}
-					date={weekCalendar[i]}
+					date={calendarWeek[i]}
 					key={i}
 				/>
 			))}
@@ -102,7 +115,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	return {
 		paths,
-		fallback: false,
+		fallback: true,
 	};
 };
 
@@ -124,7 +137,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	weeklyWorkouts = weeklyWorkouts.map((workout) =>
 		!!workout
 			? CreateWorkout(workout.date, workout.style, workout.stationList)
-			: workout
+			: null
 	);
 
 	return {

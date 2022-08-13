@@ -7,6 +7,7 @@ import cn from 'classnames';
 import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { getWorkoutByDate, getAllWorkouts } from 'lib/mongodb';
+import { useRouter } from 'next/router';
 
 interface dailyType {
 	workout: WorkoutType;
@@ -17,12 +18,7 @@ interface dailyType {
 }
 
 export default function Daily({ workout, useWorkout }: dailyType) {
-	const setWorkout = useWorkout[1];
-	useEffect(() => {
-		setWorkout(workout);
-	}, [workout, setWorkout]);
-
-	const date = new Date(workout.date);
+	const router = useRouter();
 
 	const workoutInfo = [
 		'displayStyle',
@@ -45,6 +41,13 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 		'Duration',
 		'Misc',
 	];
+
+	const setWorkout = useWorkout[1];
+	useEffect(() => {
+		setWorkout(workout);
+	}, [workout, setWorkout]);
+
+	const date = new Date(workout.date);
 
 	return (
 		<Layout page="Day" date={date}>
@@ -129,8 +132,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	}
 
 	// const { getWorkoutByDate } = require('lib/mongodb');
-	const workout = await getWorkoutByDate(new Date(year, month - 1, date));
-	// console.log(workout)
+	let workout = await getWorkoutByDate(new Date(year, month - 1, date));
+
 	return {
 		props: {
 			workout: workout
@@ -139,7 +142,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 						workout.style,
 						workout.stationList
 				  )
-				: workout,
+				: null,
 		},
+		revalidate: 1,
 	};
 };

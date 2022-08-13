@@ -2,6 +2,7 @@ import Layout from 'components/Layout';
 import NewCalendar from 'components/NewCalendar';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 
 interface ScheduleType {
 	monthlyWorkouts: WorkoutType[][];
@@ -11,6 +12,17 @@ interface ScheduleType {
 export default function Schedule({ monthlyWorkouts, date }: ScheduleType) {
 	date = new Date(date);
 	const calendar = date.getCalendar();
+
+	const router = useRouter();
+	if (router.isFallback) {
+		const fallDate = new Date();
+		return (
+			<Layout page="Month" date={fallDate}>
+				Loading...
+			</Layout>
+		);
+	}
+
 	return (
 		<Layout page="Month" date={date}>
 			<NewCalendar
@@ -41,7 +53,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	return {
 		paths,
-		fallback: false,
+		fallback: true,
 	};
 };
 
@@ -68,7 +80,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 						workout.style,
 						workout.stationList
 				  )
-				: workout
+				: null
 		)
 	);
 	// console.log(monthlyWorkouts);

@@ -1,37 +1,43 @@
-.week, .daysOfWeek, .monthRow, .highButtons, .splitMonthRow {
-    display: flex;
-    justify-content: space-around;
+.week,
+.daysOfWeek,
+.monthRow,
+.highButtons,
+.splitMonthRow {
+	display: flex;
+	justify-content: space-around;
 }
 
-.monthRow, .weekMonthRow, .splitMonthRow{
-    background-color: lightgreen;
-    cursor: pointer;
+.monthRow,
+.weekMonthRow,
+.splitMonthRow {
+	background-color: lightgreen;
+	cursor: pointer;
 }
 
 .daysOfWeek {
-    border-bottom: 3px double gray;
+	border-bottom: 3px double gray;
 }
 
 .monthRow {
-    border: 1px solid gray;
+	border: 1px solid gray;
 }
 
 .subMonth {
-    display:flex;
-    justify-content: center;
-    flex-basis: 0;
-    flex-shrink: 1;
-    border: 1px solid gray;
+	display: flex;
+	justify-content: center;
+	flex-basis: 0;
+	flex-shrink: 1;
+	border: 1px solid gray;
 }
 
 .daySquare {
-    cursor:pointer;
-    position: relative;
-    text-align: center;
-    flex-grow: 1;
-    flex-basis: 0;
-    padding: 5px;
-    border: 1px solid gray;
+	cursor: pointer;
+	position: relative;
+	text-align: center;
+	flex-grow: 1;
+	flex-basis: 0;
+	padding: 5px;
+	border: 1px solid gray;
 }
 
 /* .activeDate::after {
@@ -46,41 +52,44 @@ background-color: rgba(46, 112, 141, 0.5);
 } */
 
 .activeDate {
-    background-color: blue;
+	background-color: blue;
 }
 
 .noWorkout::after {
-    content: "No Workout";
-    color: white;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    z-index:99;
-    background-color: rgba(0,0,0,0.7);
+	content: 'No Workout';
+	color: white;
+	position: absolute;
+	font-size: small;
+	display: flex;
+	align-items: center;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 99;
+	background-color: rgba(0, 0, 0, 0.7);
 }
 
 .logoContainer {
-    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
-    border-radius: 5px;
+	box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+	border-radius: 5px;
 }
 
 .logo {
-    border-radius: 5px;
+	border-radius: 5px;
 }
 
 .date {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: rgba(0,0,0,0.7);
-    color: white;
-    border-radius: 0 0 5px 0;
-    max-width: 40px;
-    width: 50%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: rgba(0, 0, 0, 0.7);
+	color: white;
+	border-radius: 0 0 5px 0;
+	max-width: 40px;
+	width: 50%;
 }
 
 .notThisMonth {
-    background-color: rgba(0,0,0,0.2);
+	background-color: rgba(0, 0, 0, 0.2);
 }

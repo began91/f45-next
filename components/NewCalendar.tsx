@@ -134,6 +134,7 @@ export default function NewCalendar({
 			/>
 		));
 	} else if (!!week) {
+		const calendarWeek = date.getWeek();
 		//for week view, count the number of days in the month of the first day of the week
 		const daysInMonth1 = date
 			.getWeek()
@@ -141,14 +142,14 @@ export default function NewCalendar({
 				(date: Date) => date.getMonth() === date.getWeek()[0].getMonth()
 			).length as number;
 		const daysInMonth2 = 7 - daysInMonth1; //the rest of the week is in the net month (may be 0)
-		const monthDisplayShort = week.map((workout: WorkoutType) => {
-			return new Date(workout.date).toLocaleString(undefined, {
+		const monthDisplayShort = calendarWeek.map((day: Date) => {
+			return day.toLocaleString(undefined, {
 				month: 'short',
 				year: '2-digit',
 			});
 		});
-		const monthDisplayLong = week.map((workout: WorkoutType) => {
-			return new Date(workout.date).toLocaleString(undefined, {
+		const monthDisplayLong = calendarWeek.map((day: Date) => {
+			return day.toLocaleString(undefined, {
 				month: 'long',
 				year: 'numeric',
 			});
@@ -177,7 +178,7 @@ export default function NewCalendar({
 			);
 		calendarGrid = (
 			<Week
-				calendarWeek={date.getWeek()}
+				calendarWeek={calendarWeek}
 				week={week}
 				db={!!db}
 				month={!!month}

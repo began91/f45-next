@@ -1,30 +1,47 @@
 .workout {
-    display:flex;
-    justify-content:space-around;
-    border: 1px solid gray;
-    padding-left: 5px;
-    align-items: center;
-    cursor:pointer;
+	display: flex;
+	justify-content: space-around;
+	border: 1px solid gray;
+	padding-left: 5px;
+	align-items: center;
+	cursor: pointer;
+	position: relative;
 }
 
 .workout > h4 {
-    flex: .7 0 0;
+	flex: 0.7 0 0;
 }
 
 .workout > div {
-    flex: 1 0 0;
+	flex: 1 0 0;
 }
 
 .logo {
-    border-radius: 5px;
+	border-radius: 5px;
 }
 
 .logoContainer {
-    max-width: 100px;
-    flex-grow: 0.5;
-    height: 100%;
-    margin: 3px 5px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 5px 2px rgba(0,0,0,0.2)
+	max-width: 100px;
+	flex-grow: 0.5;
+	height: 100%;
+	margin: 3px 5px;
+	border-radius: 5px;
+	box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.2);
 }
 
+.noWorkout::after {
+	content: 'No Workout';
+	color: white;
+	position: absolute;
+	font-size: xx-large;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 99;
+	background-color: rgba(0, 0, 0, 0.7);
+	text-shadow: 2px 2px black;
+}

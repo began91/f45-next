@@ -8,11 +8,11 @@ import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
 import React from 'react';
 import cn from 'classnames';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 
 interface AddWorkoutType {
 	weeklyWorkouts: WorkoutType[];
-	ISOdate: Date;
+	ISOdate: string;
 	workoutStyleList: string[];
 }
 
@@ -21,37 +21,49 @@ export default function AddWorkout({
 	workoutStyleList,
 	ISOdate,
 }: AddWorkoutType) {
-	const router = useRouter();
-	if (router.isFallback) {
-		const fallDate = new Date();
-		return (
-			<Layout page="add-workout" date={fallDate}>
-				<h2 className={utilStyles.headingMd}>
-					Post Workout to Database:
-				</h2>
-				Loading...
-			</Layout>
-		);
-	}
+	// const router = useRouter();
+	// console.log(`isFallback: ${router.isFallback}`);
+	// console.log(weeklyWorkouts);
+	// console.log(workoutStyleList);
+	// console.log(ISOdate);
 
 	let date = new Date(ISOdate);
-	// console.log(weeklyWorkouts);
 
-	const todaysWorkout = weeklyWorkouts.find((dailyWorkout) =>
-		areDatesEqual(new Date(dailyWorkout.date), date)
+	const [workout, setWorkout] = useState(
+		weeklyWorkouts.find(
+			(dailyWorkout) =>
+				dailyWorkout && areDatesEqual(new Date(dailyWorkout.date), date)
+		) || CreateWorkout(date, 'Afterglow', [])
 	);
-	const [workout, setWorkout] = useState(todaysWorkout);
 
 	useEffect(() => {
-		setWorkout(todaysWorkout);
+		setWorkout(
+			weeklyWorkouts.find(
+				(dailyWorkout) =>
+					dailyWorkout &&
+					areDatesEqual(new Date(dailyWorkout.date), date)
+			) || CreateWorkout(date, 'Afterglow', [])
+		);
 	}, [ISOdate]);
+
+	useEffect(() => {
+		//https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+		const tx = document.getElementsByTagName('textarea');
+		for (let i = 0; i < tx.length; i++) {
+			tx[i].style.height = '0px';
+			tx[i].setAttribute(
+				'style',
+				'height:' + (tx[i].scrollHeight + 2) + 'px;overflow-y:hidden;'
+			);
+		}
+	});
 
 	//change workout style from dropdown menu
 	function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
 		const target = e.target as HTMLSelectElement;
-		console.log(target.value);
+		// console.log(target.value);
 		const newWorkout = CreateWorkout(date, target.value, []);
-		console.log(newWorkout);
+		// console.log(newWorkout);
 		setWorkout(newWorkout);
 	}
 
@@ -107,18 +119,6 @@ export default function AddWorkout({
 			console.log(data.value);
 		}
 	}
-
-	useEffect(() => {
-		//https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-		const tx = document.getElementsByTagName('textarea');
-		for (let i = 0; i < tx.length; i++) {
-			tx[i].style.height = '0px';
-			tx[i].setAttribute(
-				'style',
-				'height:' + (tx[i].scrollHeight + 2) + 'px;overflow-y:hidden;'
-			);
-		}
-	});
 
 	const workoutInfo = [
 		'stations',
@@ -226,7 +226,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	return {
 		paths,
-		fallback: true,
+		fallback: 'blocking',
 	};
 };
 
@@ -248,7 +248,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	weeklyWorkouts = weeklyWorkouts.map((workout) =>
 		!!workout
 			? CreateWorkout(workout.date, workout.style, workout.stationList)
-			: workout
+			: null
 	);
 
 	const workoutStyleList = await getUniqueWorkoutStyles();
@@ -259,5 +259,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 			weeklyWorkouts,
 			ISOdate: new Date(year, month - 1, date).toISOString(),
 		},
+		revalidate: 1,
 	};
 };

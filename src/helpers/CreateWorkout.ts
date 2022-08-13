@@ -3,7 +3,7 @@ import images from 'public/workout-logos/workout-logos';
 
 export interface WorkoutType {
 	[key: string]: any;
-	date: Date;
+	date: Date | string;
 	style: string;
 	displayStyle: string;
 	stations: number;
@@ -532,6 +532,15 @@ export default function WorkoutCreator(
 			timing = '35/25';
 			timeList = [35, 25, 35, 25];
 			break;
+		case 'Loading':
+		case 'No Workout':
+			stations = '';
+			pods = '';
+			laps = '';
+			sets = '';
+			timing = '';
+			timeList = [];
+			break;
 		default:
 			throw new Error(`${style} is not a valid workout style`);
 			break;
@@ -564,7 +573,7 @@ export default function WorkoutCreator(
 			: new Date(duration * 1000).toISOString().substring(14, 19);
 
 	return {
-		date,
+		date: date instanceof Date ? date.toISOString() : date,
 		style,
 		displayStyle,
 		stations,
