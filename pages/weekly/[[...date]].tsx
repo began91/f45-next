@@ -5,26 +5,18 @@ import utilStyles from 'styles/utils.module.css';
 import logos from 'public/workout-logos/workout-logos';
 import Image from 'next/image';
 import LinkIf from 'components/LinkIf';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import { GetStaticPaths, GetStaticProps } from 'next';
+// import { getAllWorkouts } from 'lib/mongodb';
 
 interface WorkoutBriefType {
 	workout: WorkoutType;
 	date: Date;
-	dayOfWeek: number;
 }
 
-function WorkoutBrief({ workout, date, dayOfWeek }: WorkoutBriefType) {
+function WorkoutBrief({ workout, date }: WorkoutBriefType) {
 	const isWorkout = !!workout;
-	const daysOfWeek = [
-		'Sun',
-		'Mon',
-		'Tues',
-		'Wednes',
-		'Thurs',
-		'Fri',
-		'Satur',
-	].map((d) => d + 'day');
+
 	const datePathString = `/${date.getFullYear()}/${
 		date.getMonth() + 1
 	}/${date.getDate()}`;
@@ -35,7 +27,9 @@ function WorkoutBrief({ workout, date, dayOfWeek }: WorkoutBriefType) {
 				className={styles.workout}
 				title={workout?.displayStyle || 'No workout'}
 			>
-				<h4 className={utilStyles.headerMd}>{daysOfWeek[dayOfWeek]}</h4>
+				<h4 className={utilStyles.headerMd}>
+					{date.toLocaleString(undefined, { weekday: 'long' })}
+				</h4>
 				<div className={styles.logoContainer}>
 					<Image
 						priority
@@ -62,23 +56,27 @@ function WorkoutBrief({ workout, date, dayOfWeek }: WorkoutBriefType) {
 }
 
 interface WeeklyType {
-	week: WorkoutType[];
-	year: number;
-	month: number;
-	date: number;
+	weeklyWorkouts: WorkoutType[];
+	date: Date;
 }
 
-export default function Weekly({ week, year, month, date }: WeeklyType) {
-	const selectedDate = new Date(year, month - 1, date);
+export default function Weekly({ weeklyWorkouts, date }: WeeklyType) {
+	// const selectedDate = new Date(year, month - 1, date);
+	date = new Date(date);
+
+	const weekCalendar = date.getWeek();
 
 	return (
-		<Layout page="Week" date={selectedDate}>
-			<NewCalendar week={week} date={selectedDate} />
-			{week.map((workout: WorkoutType, i: number) => (
+		<Layout page="Week" date={date}>
+			<NewCalendar
+				weekCalendar={weekCalendar}
+				week={weeklyWorkouts}
+				date={date}
+			/>
+			{weeklyWorkouts.map((workout: WorkoutType, i: number) => (
 				<WorkoutBrief
 					workout={workout}
-					date={selectedDate}
-					dayOfWeek={i}
+					date={weekCalendar[i]}
 					key={i}
 				/>
 			))}
@@ -90,15 +88,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	const { getAllWorkouts } = require('lib/mongodb');
 	const workouts = await getAllWorkouts();
 	const paths = workouts.map((workout: WorkoutType) => {
-		const { year, month, date } = workout;
+		const date = new Date(workout.date);
 		return {
 			params: {
-				date: [String(year), String(month), String(date)],
+				date: [
+					String(date.getFullYear()),
+					String(date.getMonth() + 1),
+					String(date.getDate()),
+				],
 			},
 		};
 	});
-
-	paths.push({ params: { date: [''] } });
 
 	return {
 		paths,
@@ -109,7 +109,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const newDate = new Date(); //default is today if no date is specified
 	let year = newDate.getFullYear();
-	let month = newDate.getMonth();
+	let month = newDate.getMonth() + 1;
 	let date = newDate.getDate();
 	if (params?.date) {
 		[year, month, date] = (params.date as string[]).map((a: string) =>
@@ -118,14 +118,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	}
 
 	const { getWorkoutByWeek } = require('lib/mongodb');
-	const week = await getWorkoutByWeek(year, month, date);
+	let weeklyWorkouts: WorkoutType[] = await getWorkoutByWeek(
+		new Date(year, month - 1, date)
+	);
+	weeklyWorkouts = weeklyWorkouts.map((workout) =>
+		!!workout
+			? CreateWorkout(workout.date, workout.style, workout.stationList)
+			: workout
+	);
 
 	return {
 		props: {
-			week,
-			year,
-			month,
-			date,
+			weeklyWorkouts,
+			date: new Date(year, month - 1, date).toISOString(),
 		},
 	};
 };

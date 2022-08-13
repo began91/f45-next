@@ -12,15 +12,15 @@ export default async function handler(
 ) {
 	const { db } = await connectToDatabase();
 	let body = req.body;
-	const { year, month, date, style } = body;
+	const { date, style } = body;
 	switch (req.method) {
 		case 'POST':
 			console.log(
-				`Received Posted workout: Style: ${style} Date:${month}/${date}/${year}`
+				`Received Posted workout: Style: ${style} Date: ${date.toISOString()}`
 			);
 
 			await db.collection('archivedWorkouts').insertOne(body);
-			res.json(await db.collection('workouts').insertOne(body));
+			res.json(await db.collection('userWorkouts').insertOne(body));
 			break;
 		case 'GET':
 			body = req.body;
@@ -31,9 +31,9 @@ export default async function handler(
 			res.json({
 				status: 200,
 				data: await db
-					.collection('workouts')
+					.collection('userWorkouts')
 					.find({})
-					.limit(20)
+					// .limit(20)
 					.toArray(),
 			});
 			// }

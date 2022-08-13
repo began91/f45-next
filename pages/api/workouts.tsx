@@ -8,19 +8,26 @@ export default async function handler(
 ) {
 	const { db } = await connectToDatabase();
 	let body = req.body;
+	console.log('body');
 	console.log(body);
-	const { year, month, date, style } = body;
+	const { date, style } = body;
 	switch (req.method) {
 		case 'POST':
 			//delete if theres already a workout for that date:
-			await db.collection('workouts').deleteOne({ year, month, date });
+
+			res.json(
+				await db
+					.collection('workouts')
+					.findOneAndReplace({ date }, body)
+			);
+			// .deleteOne({ year, month, date });
 
 			console.log(
-				`Received Posted workout: Style: ${style} Date: ${month}/${date}/${year}`
+				`Received Posted workout: Style: ${style} Date: ${date}`
 			);
 
 			await db.collection('archivedWorkouts').insertOne(body);
-			res.json(await db.collection('workouts').insertOne(body));
+			// res.json(await db.collection('workouts').insertOne(body));
 			break;
 		case 'GET':
 			body = req.body;
@@ -31,20 +38,8 @@ export default async function handler(
 					.collection('workouts')
 					.find({})
 					// .limit(20)
-					.toArray()
-					.then((data) => {
-						return data.map((workout) => {
-							const { year, month, date, style, stationList } =
-								workout;
-							return CreateWorkout(
-								year,
-								month,
-								date,
-								style,
-								stationList
-							);
-						});
-					}),
+					.project({ _id: 0 })
+					.toArray(),
 			});
 			break;
 		default:

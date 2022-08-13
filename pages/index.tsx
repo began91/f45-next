@@ -21,19 +21,31 @@ export default function Home({ useDate }: HomeType) {
 				<ul>
 					<li>
 						Get a sneak peak at the upcoming F45{' '}
-						<Link href="schedule">
+						<Link
+							href={`schedule/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}`}
+						>
 							<a>class schedule</a>
 						</Link>
 					</li>
 					<li>
 						See the workouts&apos;{' '}
-						<Link href="weekly">
+						<Link
+							href={`weekly/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}/${date.getDate()}`}
+						>
 							<a>stations for this week</a>
 						</Link>
 					</li>
 					<li>
 						Build your own{' '}
-						<Link href="custom">
+						<Link
+							href={`custom/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}/${date.getDate()}`}
+						>
 							<a>custom workouts</a>
 						</Link>{' '}
 						using the F45 format.

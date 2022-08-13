@@ -7,11 +7,17 @@ import Link from 'next/link';
 // import logos from '../public/workout-logos/workout-logos';
 import cn from 'classnames';
 import { useSession } from 'next-auth/react';
+import { ReactNode } from 'react';
 
 const name = 'Fit 45-Minute Workout Timer';
 export const siteTitle = 'Fit 45-Minute Workout Timer';
 
-function NavBar({ page, date }) {
+interface NavBarType {
+	page: string;
+	date: Date;
+}
+
+function NavBar({ page, date }: NavBarType) {
 	//navbar at top of layout
 	if (!date) {
 		throw new Error('Date not supplied to NavBar');
@@ -57,7 +63,7 @@ function NavBar({ page, date }) {
 	//links to iterate over
 	let href = [
 		'/',
-		'/schedule',
+		'/schedule' + datePathString,
 		'/weekly' + datePathString,
 		'/daily' + datePathString,
 		'/custom',
@@ -85,7 +91,13 @@ function NavBar({ page, date }) {
 	);
 }
 
-export default function Layout({ children, page, date }) {
+interface LayoutType {
+	children: ReactNode;
+	page: string;
+	date: Date;
+}
+
+export default function Layout({ children, page, date }: LayoutType) {
 	return (
 		<>
 			<NavBar page={page} date={date} />

@@ -3,34 +3,47 @@ import React, { useState, useEffect } from 'react'; //configure to useRef vice p
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
-import {
-	workoutStyleList,
-	getLastWorkoutByStyle,
-	areDatesEqual,
-} from 'src/helpers/lists';
+// import {
+// 	workoutStyleList,
+// 	getLastWorkoutByStyle,
+// 	areDatesEqual,
+// } from 'src/helpers/lists';
 // import { getWorkoutByDate } from 'lib/mongodb';
 import cn from 'classnames';
 import NewCalendar from 'components/NewCalendar';
 import useSWR from 'swr';
+import { areDatesEqual } from 'src/helpers/lists';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export default function AddWorkout() {
 	const [date, setDate] = useState(new Date());
+
+	const [workout, setWorkout] = useState(CreateWorkout(date, 'Abacus', []));
+
 	const { data, error } = useSWR('api/workouts', fetcher);
+
+	useEffect(() => {
+		//create a workout on the date specified
+		console.log(date);
+		defaultWorkout = CreateWorkout(date, 'Abacus', []);
+
+		let workoutByDate = defaultWorkout;
+		if (data) {
+			console.log(data);
+			workoutByDate = data.data.find((workout: WorkoutType) =>
+				areDatesEqual(date, workout.date)
+			);
+		}
+		setWorkout(workoutByDate || defaultWorkout);
+		console.log('Just set workout to:');
+		console.log(workout);
+	}, [date, setWorkout, data]);
+
 	if (error) {
 		throw new Error(error);
 	}
-
-	let defaultWorkout = CreateWorkout(
-		date.getFullYear(),
-		date.getMonth() + 1,
-		date.getDate(),
-		workoutStyleList[0],
-		[]
-	);
-
-	const [workout, setWorkout] = useState(defaultWorkout);
+	if (!data) return <div>Loading...</div>;
 
 	async function postWorkout(e: React.MouseEvent<HTMLElement>) {
 		e.preventDefault();
@@ -76,28 +89,13 @@ export default function AddWorkout() {
 		//when style selected from dropdown, create empty workout of that style on the selected date
 		const target = e.target as HTMLSelectElement;
 		// const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
-		const newWorkout = CreateWorkout(
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
-			target.value,
-			[]
-		);
+		const newWorkout = CreateWorkout(date, target.value, []);
 		setWorkout(newWorkout);
 	}
 
 	const resetAll = () => {
 		//reset all exercise station fields to the most recent workout.
-		const lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
-		const newWorkout = CreateWorkout(
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
-			workout.style,
-			lastWorkoutByStyle?.stationList.filter(
-				(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-			) || []
-		);
+		const newWorkout = CreateWorkout(date, workout.style, []);
 		setWorkout(newWorkout);
 	};
 
@@ -126,47 +124,12 @@ export default function AddWorkout() {
 		setWorkout({ ...workout, stationList: newStationList });
 	};
 
-	useEffect(() => {
-		//https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-		const tx = document.getElementsByTagName('textarea');
-		for (let i = 0; i < tx.length; i++) {
-			tx[i].style.height = '0px';
-			tx[i].setAttribute(
-				'style',
-				'height:' + (tx[i].scrollHeight + 2) + 'px;overflow-y:hidden;'
-			);
-		}
-	});
-
-	useEffect(() => {
-		//create a workout on the date specified
-		console.log(date);
-		defaultWorkout = CreateWorkout(
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
-			workoutStyleList[0],
-			[]
-		);
-		let workoutByDate = defaultWorkout;
-		if (data) {
-			console.log(data);
-			workoutByDate = data.data.find((workout: WorkoutType) =>
-				areDatesEqual(
-					date,
-					new Date(workout.year, workout.month - 1, workout.date)
-				)
-			);
-		}
-		setWorkout(workoutByDate || defaultWorkout);
-		console.log('Just set workout to:');
-		console.log(workout);
-	}, [date, setWorkout, data]);
+	const weekCalendar = date.getWeek();
 
 	return (
 		<Layout page="add-workout" date={date}>
 			<h2 className={utilStyles.headingMd}>Post Workout to Database:</h2>
-			<NewCalendar useDate={[date, setDate]} week db />
+			<NewCalendar date={date} week db />
 			<label htmlFor="workoutStyle">
 				<b>Workout Style: </b>
 			</label>

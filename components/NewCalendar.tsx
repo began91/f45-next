@@ -1,32 +1,3 @@
-// import { getWorkoutByDate } from '../src/helpers/lists';//this is going to move to an API call to get a workout on the specified dates.
-
-/*
-need to go back into schedule and weekly to get serverside props with a db call. Available
-
-
-Options:
-static generation: One API call that gets all the workouts at once.
-Pros: simple
-cons: slows down with big API call. slows down with heavier component
-
-static generation for each month:
-pros: quick delivery to client, adjacent months are ready to go
-cons: need to set up unique pages for each month with url routing (already set up for daily though so nbd), need to set up 404 page, need to make months/weeks with no workouts not selectable (or just load one month before and after selectable months) via getServerSideProps
-
-server side render on request for a new month:
-doesnt really make sense since the data isnt changing
-
-
-
-client side request for a new month:
-currently, each workout is one request, but that could be optimized to mmake an API call for a week or month of workouts
-pros: just fetch what you need right now
-const: request to server and db every time new month or week selected
-
-
-
-
-*/
 import logos from '../public/workout-logos/workout-logos';
 import LinkIf from 'components/LinkIf';
 import styles from 'components/Calendar.module.css';
@@ -35,16 +6,15 @@ import cn from 'classnames';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
 import { ReactElement } from 'react';
 
-//Calendar outputs a month or week of dates around the date provided in props
-
 interface WeekType {
 	week: WorkoutType[];
 	month?: boolean;
+	calendarWeek: Date[];
 	db: boolean;
 	activeDate: Date;
 }
 
-function Week({ week, month, db, activeDate }: WeekType) {
+function Week({ calendarWeek, week, month, db, activeDate }: WeekType) {
 	//row in the calendar
 	return (
 		<div className={styles.week}>
@@ -55,10 +25,13 @@ function Week({ week, month, db, activeDate }: WeekType) {
 					month={!!month}
 					db={db}
 					isActiveDate={
-						workout.month - 1 === activeDate.getMonth() &&
-						workout.date === activeDate.getDate()
+						calendarWeek[i].getMonth() === activeDate.getMonth() &&
+						calendarWeek[i].getDate() === activeDate.getDate()
 					}
-					isThisMonth={workout.month - 1 === activeDate.getMonth()}
+					isThisMonth={
+						calendarWeek[i].getMonth() === activeDate.getMonth()
+					}
+					date={calendarWeek[i]}
 				/>
 			))}
 		</div>
@@ -71,6 +44,7 @@ interface DaySquareType {
 	db: boolean;
 	isActiveDate: boolean;
 	isThisMonth: boolean;
+	date: Date;
 }
 
 function DaySquare({
@@ -79,9 +53,9 @@ function DaySquare({
 	db,
 	isActiveDate,
 	isThisMonth,
+	date,
 }: DaySquareType) {
-	let isWorkout = !!workout;
-	const date = new Date(workout.year, workout.month - 1, workout.date);
+	const isWorkout = !!workout;
 
 	const logo = workout?.logo || logos.defaultLogo;
 	const datePathString = `/${date.getFullYear()}/${
@@ -92,13 +66,13 @@ function DaySquare({
 	if (month) {
 		href = '/weekly' + datePathString;
 	} else if (db) {
-		href = '/add-workout';
+		href = '/add-workout' + datePathString;
 	} else {
 		href = '/daily' + datePathString;
 	}
 
 	return (
-		<LinkIf href={href} isLink={!db && isWorkout}>
+		<LinkIf href={href} isLink={isWorkout || db}>
 			<div
 				className={cn(styles.daySquare, {
 					[styles.notThisMonth]: !isThisMonth && month,
@@ -126,10 +100,9 @@ function DaySquare({
 
 export default function NewCalendar({
 	date, //date from state
-	//booleans
-	month, //month view
-	week, //week view
-	db, //db update page
+	month, //monththly Workouts
+	week, //weeklyWorkouts
+	db, //db update page boolean
 }: {
 	date: Date;
 	month?: WorkoutType[][];
@@ -151,32 +124,31 @@ export default function NewCalendar({
 			</div>
 		);
 		calendarGrid = month.map((week, i) => (
-			<Week week={week} key={i} month db={!!db} activeDate={date} />
+			<Week
+				calendarWeek={date.getCalendar()[i]}
+				week={week}
+				key={i}
+				month
+				db={!!db}
+				activeDate={date}
+			/>
 		));
 	} else if (!!week) {
 		//for week view, count the number of days in the month of the first day of the week
-		const daysInMonth1 = week.filter(
-			(workout: WorkoutType) => workout.month === week[0].month
-		).length;
+		const daysInMonth1 = date
+			.getWeek()
+			.filter(
+				(date: Date) => date.getMonth() === date.getWeek()[0].getMonth()
+			).length as number;
 		const daysInMonth2 = 7 - daysInMonth1; //the rest of the week is in the net month (may be 0)
 		const monthDisplayShort = week.map((workout: WorkoutType) => {
-			const newDate = new Date(
-				workout.year,
-				workout.month - 1,
-				workout.date
-			);
-			return newDate.toLocaleString(undefined, {
+			return new Date(workout.date).toLocaleString(undefined, {
 				month: 'short',
 				year: '2-digit',
 			});
 		});
 		const monthDisplayLong = week.map((workout: WorkoutType) => {
-			const newDate = new Date(
-				workout.year,
-				workout.month - 1,
-				workout.date
-			);
-			return newDate.toLocaleString(undefined, {
+			return new Date(workout.date).toLocaleString(undefined, {
 				month: 'long',
 				year: 'numeric',
 			});
@@ -204,11 +176,17 @@ export default function NewCalendar({
 				</div>
 			);
 		calendarGrid = (
-			<Week week={week} db={!!db} month={!!month} activeDate={date} />
+			<Week
+				calendarWeek={date.getWeek()}
+				week={week}
+				db={!!db}
+				month={!!month}
+				activeDate={date}
+			/>
 		);
 	} else {
 		throw new Error(
-			'Week or Month must be specified to Calendar component.'
+			'Week or Month, and the respective calendars must be specified to Calendar component.'
 		);
 	}
 
@@ -221,24 +199,36 @@ export default function NewCalendar({
 		)
 	);
 
+	//date commanded by the back and fwd buttons (1 wk or 1 month)
 	const backDate = week
 		? new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7)
 		: new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
 	const fwdDate = week
 		? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7)
 		: new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
-	const hrefBack = `/${
-		week ? 'weekly' : 'schedule'
-	}/${backDate.getFullYear()}/${
+
+	let hrefPage: string;
+	if (db) {
+		hrefPage = 'add-workout';
+	} else if (!!month) {
+		hrefPage = 'schedule';
+	} else {
+		hrefPage = 'weekly';
+	}
+
+	const hrefBack = `/${hrefPage}/${backDate.getFullYear()}/${
 		backDate.getMonth() + 1
 	}/${backDate.getDate()}`;
-	const hrefFwd = `/${
-		week ? 'weekly' : 'schedule'
-	}/${fwdDate.getFullYear()}/${fwdDate.getMonth() + 1}/${fwdDate.getDate()}`;
+
+	const hrefFwd = `/${hrefPage}/${fwdDate.getFullYear()}/${
+		fwdDate.getMonth() + 1
+	}/${fwdDate.getDate()}`;
+
+	//date commanded by go to today button
 	const today = new Date();
-	const hrefToday = `/${
-		week ? 'weekly' : 'schedule'
-	}/${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+	const hrefToday = `/${hrefPage}/${today.getFullYear()}/${
+		today.getMonth() + 1
+	}/${today.getDate()}`;
 
 	//buttons for incrementing the date
 	const highButtons = (
@@ -258,7 +248,12 @@ export default function NewCalendar({
 	return (
 		<div className="calendar">
 			{highButtons}
-			<LinkIf href="/schedule" isLink={!db && !!week}>
+			<LinkIf
+				href={`/schedule/${date.getFullYear()}/${
+					date.getMonth() + 1
+				}/${date.getDate()}`}
+				isLink={!db && !!week}
+			>
 				{monthRow}
 			</LinkIf>
 			<div className={styles.daysOfWeek}>{daysOfWeek}</div>

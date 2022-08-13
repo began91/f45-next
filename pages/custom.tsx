@@ -49,9 +49,7 @@ export default function Custom({
 		const target = e.target as HTMLSelectElement;
 		const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
 		const newWorkout = CreateWorkout(
-			newDate.getFullYear(),
-			newDate.getMonth() + 1,
-			newDate.getDate(),
+			newDate,
 			target.value,
 			lastWorkoutByStyle?.stationList.filter(
 				(_, i) => i < (lastWorkoutByStyle?.stations || 0)
@@ -63,9 +61,7 @@ export default function Custom({
 	const resetAll = () => {
 		const lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
 		const newWorkout = CreateWorkout(
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
+			date,
 			workout.style,
 			lastWorkoutByStyle?.stationList.filter(
 				(_, i) => i < (lastWorkoutByStyle?.stations || 0)

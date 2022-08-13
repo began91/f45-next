@@ -3,9 +3,7 @@ import images from 'public/workout-logos/workout-logos';
 
 export interface WorkoutType {
 	[key: string]: any;
-	year: number;
-	month: number;
-	date: number;
+	date: Date;
 	style: string;
 	displayStyle: string;
 	stations: number;
@@ -26,12 +24,17 @@ export interface WorkoutType {
 }
 
 export default function WorkoutCreator(
-	year: number,
-	month: number,
-	date: number,
+	date: Date,
 	workoutStyle: string,
 	stationList: string[] = []
 ) {
+	if (!date) {
+		throw new Error('Date not supplied to WorkoutCreator');
+	}
+	if (!workoutStyle) {
+		throw new Error('Workout style not supplied to WorkoutCreator');
+	}
+
 	let style = workoutStyle;
 	let displayStyle = style;
 	let stations: number = 1;
@@ -528,7 +531,9 @@ export default function WorkoutCreator(
 			sets = 2;
 			timing = '35/25';
 			timeList = [35, 25, 35, 25];
+			break;
 		default:
+			throw new Error(`${style} is not a valid workout style`);
 			break;
 	}
 
@@ -549,6 +554,7 @@ export default function WorkoutCreator(
 
 	stationList.push('Rest-Stay Here');
 	stationList.push('Rest-Next Station');
+
 	// stationList.push('Rest-Next Pod'); //Not sure if needed yet. will need to adjust some logic elsewhere that assumes only two things have been added to the workout list.
 	let setDurationList = timeIndex.map((tI) => timeList[tI]);
 	let duration = setDurationList.reduce((a, b) => a + b, 0);
@@ -558,8 +564,6 @@ export default function WorkoutCreator(
 			: new Date(duration * 1000).toISOString().substring(14, 19);
 
 	return {
-		year,
-		month,
 		date,
 		style,
 		displayStyle,
@@ -577,8 +581,5 @@ export default function WorkoutCreator(
 		setDurationList,
 		durationDisplay,
 		logo,
-		// setStationList: function setStationList(stationList) {
-		//     this.stationList = stationList;
-		// },
 	} as WorkoutType;
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import Layout from 'components/Layout';
 // import { connectToDatabase } from 'lib/mongodb';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import styles from 'styles/daily.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 		setWorkout(workout);
 	}, [workout, setWorkout]);
 
-	const date = new Date(workout.year, workout.month - 1, workout.date);
+	const date = new Date(workout.date);
 
 	const workoutInfo = [
 		'displayStyle',
@@ -34,6 +34,7 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 		'durationDisplay',
 		'misc',
 	];
+
 	const workoutInfoLabels = [
 		'Style',
 		'Stations',
@@ -93,15 +94,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	//get dates of all workouts from mongo and return as possible paths
 	const workouts = await getAllWorkouts();
 	const paths = workouts.map((workout) => {
-		const { year, month, date } = workout;
+		const date = new Date(workout.date);
 		return {
 			params: {
-				date: [`${year}`, `${month}`, `${date}`],
+				date: [
+					String(date.getFullYear()),
+					String(date.getMonth() + 1),
+					String(date.getDate()),
+				],
 			},
 		};
 	});
 
-	paths.push({ params: { date: [''] } });
 	return {
 		paths,
 		fallback: false,
@@ -114,7 +118,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	//default is today
 	const newDate = new Date();
 	let year = newDate.getFullYear();
-	let month = newDate.getMonth();
+	let month = newDate.getMonth() + 1;
 	let date = newDate.getDate();
 	if (params?.date) {
 		//if a date was supplied, set that instead
@@ -125,11 +129,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	}
 
 	// const { getWorkoutByDate } = require('lib/mongodb');
-	const workout = await getWorkoutByDate(year, month, date);
+	const workout = await getWorkoutByDate(new Date(year, month - 1, date));
 	// console.log(workout)
 	return {
 		props: {
-			workout,
+			workout: workout
+				? CreateWorkout(
+						workout.date,
+						workout.style,
+						workout.stationList
+				  )
+				: workout,
 		},
 	};
 };

@@ -13,133 +13,133 @@ import Image from 'next/image';
 import logos from '../public/workout-logos/workout-logos';
 
 export default function WorkoutScreen({
-    useWorkout: [workout, setWorkout],
-    snd,
+	useWorkout: [workout, setWorkout],
+	snd,
 }) {
-    //state
-    const [mainTimer, setMainTimer] = useState(0);
-    const [isActive, setIsActive] = useState(true);
-    const [currentSet, setCurrentSet] = useState(0);
-    const [setTimer, setSetTimer] = useState(0);
-    const [isComplete, setIsComplete] = useState(false);
+	//state
+	const [mainTimer, setMainTimer] = useState(0);
+	const [isActive, setIsActive] = useState(true);
+	const [currentSet, setCurrentSet] = useState(0);
+	const [setTimer, setSetTimer] = useState(0);
+	const [isComplete, setIsComplete] = useState(false);
 
-    //derivatives of state
-    let currentSetDuration = workout.timeList[workout.timeIndex[currentSet]];
-    let isWork = workout.stationIndex[currentSet] < workout.stations;
+	//derivatives of state
+	let currentSetDuration = workout.timeList[workout.timeIndex[currentSet]];
+	let isWork = workout.stationIndex[currentSet] < workout.stations;
 
-    const endWorkout = useCallback(() => {
-        setIsComplete(true);
-        setIsActive(false);
-        // router.push('/');
-    }, [setIsComplete, setIsActive]);
+	const endWorkout = useCallback(() => {
+		setIsComplete(true);
+		setIsActive(false);
+		// router.push('/');
+	}, [setIsComplete, setIsActive]);
 
-    const updateActiveTimers = useCallback(() => {
-        if (setTimer >= currentSetDuration - 1) {
-            if (currentSet >= workout.numSets - 1) {
-                endWorkout();
-            }
-            snd.src = Beep;
-            snd.play();
-            setCurrentSet(currentSet => currentSet + 1);
-            setSetTimer(-1);
-        }
-        setMainTimer(mainTimer => mainTimer + 1);
-        setSetTimer(setTimer => setTimer + 1);
-    }, [currentSetDuration, setTimer, currentSet, endWorkout, workout, snd]);
+	const updateActiveTimers = useCallback(() => {
+		if (setTimer >= currentSetDuration - 1) {
+			if (currentSet >= workout.numSets - 1) {
+				endWorkout();
+			}
+			snd.src = Beep;
+			snd.play();
+			setCurrentSet((currentSet) => currentSet + 1);
+			setSetTimer(-1);
+		}
+		setMainTimer((mainTimer) => mainTimer + 1);
+		setSetTimer((setTimer) => setTimer + 1);
+	}, [currentSetDuration, setTimer, currentSet, endWorkout, workout, snd]);
 
-    useEffect(() => {
-        // https://www.geeksforgeeks.org/create-a-stop-watch-using-reactjs/
-        let interval = null;
+	useEffect(() => {
+		// https://www.geeksforgeeks.org/create-a-stop-watch-using-reactjs/
+		let interval = null;
 
-        if (currentSet >= workout.numSets) {
-            endWorkout();
-        }
+		if (currentSet >= workout.numSets) {
+			endWorkout();
+		}
 
-        if (isActive) {
-            interval = setInterval(updateActiveTimers, 1000);
-        } else {
-            clearInterval(interval);
-        }
-        return () => clearInterval(interval);
-    }, [isActive, updateActiveTimers, currentSet, workout, endWorkout]);
+		if (isActive) {
+			interval = setInterval(updateActiveTimers, 1000);
+		} else {
+			clearInterval(interval);
+		}
+		return () => clearInterval(interval);
+	}, [isActive, updateActiveTimers, currentSet, workout, endWorkout]);
 
-    const handlePlayPause = () => {
-        setIsActive(!isActive);
-    };
+	const handlePlayPause = () => {
+		setIsActive(!isActive);
+	};
 
-    const resetWorkout = e => {
-        setIsComplete(false);
-        setMainTimer(0);
-        setIsActive(true);
-        setCurrentSet(0);
-        setSetTimer(0);
-    };
+	const resetWorkout = (e) => {
+		setIsComplete(false);
+		setMainTimer(0);
+		setIsActive(true);
+		setCurrentSet(0);
+		setSetTimer(0);
+	};
 
-    return (
-        <div
-            className={cn(
-                isWork ? styles.work : styles.rest,
-                styles.workoutScreen
-            )}
-        >
-            <ExitMenu endWorkout={endWorkout} />
+	return (
+		<div
+			className={cn(
+				isWork ? styles.work : styles.rest,
+				styles.workoutScreen
+			)}
+		>
+			<ExitMenu endWorkout={endWorkout} />
 
-            <div
-                className={cn(
-                    styles.logoContainer,
-                    isWork ? styles.logoWork : styles.logoRest
-                )}
-            >
-                <Timers
-                    workout={workout}
-                    currentSet={currentSet}
-                    mainTimer={mainTimer}
-                    setTimer={setTimer}
-                    isComplete={isComplete}
-                />
-                <div className={styles.imgContainer}>
-                    <Image
-                        src={workout.logo ? workout.logo : logos.defaultLogo}
-                        layout="responsive"
-                        alt="logo"
-                    />
-                </div>
-                <SetBars
-                    workout={workout}
-                    useCurrentSet={[currentSet, setCurrentSet]}
-                    useSetTimer={[setTimer, setSetTimer]}
-                />
-            </div>
+			<div
+				className={cn(
+					styles.logoContainer,
+					isWork ? styles.logoWork : styles.logoRest
+				)}
+			>
+				<Timers
+					workout={workout}
+					currentSet={currentSet}
+					mainTimer={mainTimer}
+					setTimer={setTimer}
+					isComplete={isComplete}
+				/>
+				<div className={styles.imgContainer}>
+					<Image
+						src={workout.logo ? workout.logo : logos.defaultLogo}
+						layout="responsive"
+						alt="logo"
+					/>
+				</div>
+				<SetBars
+					workout={workout}
+					useCurrentSet={[currentSet, setCurrentSet]}
+					useSetTimer={[setTimer, setSetTimer]}
+				/>
+			</div>
 
-            {isComplete ? (
-                <WorkoutStats
-                    mainTimer={mainTimer}
-                    resetWorkout={resetWorkout}
-                />
-            ) : (
-                <>
-                    <div
-                        className={styles.currentSet}
-                        onClick={handlePlayPause}
-                    >
-                        {/* https://www.youtube.com/watch?v=mSfsGTIQlxg */}
-                        <TimeCircle
-                            isWork={isWork}
-                            currentSetDuration={currentSetDuration}
-                            setTimer={setTimer}
-                        />
-                        <SetDisplay workout={workout} currentSet={currentSet} />
+			{isComplete ? (
+				<WorkoutStats
+					mainTimer={mainTimer}
+					resetWorkout={resetWorkout}
+				/>
+			) : (
+				<>
+					<div
+						className={styles.currentSet}
+						onClick={handlePlayPause}
+					>
+						{/* https://www.youtube.com/watch?v=mSfsGTIQlxg */}
+						<TimeCircle
+							isWork={isWork}
+							currentSetDuration={currentSetDuration}
+							setTimer={setTimer}
+						/>
+						<SetDisplay workout={workout} currentSet={currentSet} />
 
-                        <TimeControls
-                            workout={workout}
-                            endWorkout={endWorkout}
-                            useCurrentSet={[currentSet, setCurrentSet]}
-                            useSetTimer={[setTimer, setSetTimer]}
-                            isActive={isActive}
-                        />
-                    </div>
-                </>
-            )}
-        </div>
-    );
+						<TimeControls
+							workout={workout}
+							endWorkout={endWorkout}
+							useCurrentSet={[currentSet, setCurrentSet]}
+							useSetTimer={[setTimer, setSetTimer]}
+							isActive={isActive}
+						/>
+					</div>
+				</>
+			)}
+		</div>
+	);
 }

@@ -1,5 +1,6 @@
 import { MongoClient, MongoClientOptions, Db, ObjectId } from 'mongodb';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+import { areDatesEqual } from 'src/helpers/areDatesEqual';
+// import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 // import Workout from 'src/helpers/CreateWorkout.js';
 
 const uri = process.env.MONGODB_URI as string;
@@ -63,68 +64,90 @@ export default clientPromise;
 
 export async function getAllWorkouts() {
 	const { db, client } = await connectToDatabase();
-	const workouts = await db.collection('workouts').find({}).toArray();
+	const workouts = await db
+		.collection('workouts')
+		.find({})
+		.project({ _id: 0 })
+		.toArray();
+
 	client.close();
 	return Promise.all(workouts);
 }
 
-export async function getWorkoutByDate(
-	year: number,
-	month: number,
-	date: number
-) {
+export async function getWorkoutByDate(date: Date) {
 	// const newDate = new Date(year, month - 1, date);
 
 	const { db, client } = await connectToDatabase();
 
 	const workout = await db
 		.collection('workouts')
-		.findOne({ year, month, date });
+		.findOne({ date: date.toISOString() }, { projection: { _id: 0 } });
 
-	if (workout) {
-		(await workout)._id = '';
-	}
+	// if (workout) {
+	// 	(await workout)._id = '';
+	// }
 
 	client.close();
 	return workout;
 }
 
-export async function getWorkoutByWeek(
-	year: number,
-	month: number,
-	date: number
-) {
-	const newDate = new Date(year, month - 1, date);
+export async function getWorkoutByWeek(date: Date) {
+	const week = date.getWeek();
 
-	const week = newDate.getWeek();
+	const { db, client } = await connectToDatabase();
 
-	const workoutWeek = week.map(
-		async (date: Date) =>
-			await getWorkoutByDate(
-				date.getFullYear(),
-				date.getMonth() + 1,
-				date.getDate()
-			)
+	const workouts = await db
+		.collection('workouts')
+		.find({
+			date: { $gte: week[0].toISOString(), $lte: week[6].toISOString() },
+		})
+		.project({ _id: 0 })
+		.toArray();
+
+	return Promise.all(
+		week.map(
+			(date) =>
+				workouts.find((workout) =>
+					areDatesEqual(new Date(workout.date), date)
+				) || null
+		)
 	);
-
-	return Promise.all(workoutWeek);
 }
 
-export async function getWorkoutByMonth(
-	year: number,
-	month: number,
-	date: number
-) {
-	const newDate = new Date(year, month - 1, date);
-	const calendar = newDate.getCalendar();
-	const workoutCalendar = calendar.map(async (week: Date[]) => {
-		return getWorkoutByWeek(
-			week[0].getFullYear(),
-			week[0].getMonth() + 1,
-			week[0].getDate()
-		);
-	});
-	return Promise.all(workoutCalendar);
+export async function getWorkoutByMonth(date: Date) {
+	const calendar = date.getCalendar();
+
+	const { db, client } = await connectToDatabase();
+
+	const workouts = await db
+		.collection('workouts')
+		.find({
+			date: {
+				$gte: calendar[0][0].toISOString(),
+				$lte: calendar[calendar.length - 1][6].toISOString(),
+			},
+		})
+		.project({ _id: 0 })
+		.toArray();
+
+	return Promise.all(
+		calendar.map((week) =>
+			week.map(
+				(date) =>
+					workouts.find((workout) =>
+						areDatesEqual(new Date(workout.date), date)
+					) || null
+			)
+		)
+	);
+}
+
+export async function getUniqueWorkoutStyles() {
+	const { db, client } = await connectToDatabase();
+
+	const uniqueStyles = await db.collection('workouts').distinct('style');
+
+	return uniqueStyles;
 }
 
 // export async function getWorkoutWeek(year,month,date) {
