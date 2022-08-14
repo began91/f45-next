@@ -29,7 +29,7 @@ import Montblanc from './montblanc.png';
 import Moonhopper from './moonhopper.png';
 import Mvp from './mvp.png';
 import Noho from './noho.png';
-import Panther from './panther.png';
+import Panthers from './panther.png';
 import Pegasus from './pegasus.png';
 import Pipeline from './pipeline.png';
 import Piston from './piston.png';
@@ -61,7 +61,7 @@ interface ImagesType {
 
 const images: ImagesType = {
 	'3-peat': three_peat,
-	22: twenty_two,
+	'22': twenty_two,
 	Abacus,
 	Afterglow,
 	Allstar,
@@ -91,7 +91,7 @@ const images: ImagesType = {
 	Moonhopper,
 	Mvp,
 	Noho,
-	Panther,
+	Panthers,
 	Pegasus,
 	Pipeline,
 	Piston,

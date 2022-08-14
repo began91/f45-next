@@ -14,20 +14,14 @@ export default async function handler(
 	switch (req.method) {
 		case 'POST':
 			//delete if theres already a workout for that date:
-
-			res.json(
-				await db
-					.collection('workouts')
-					.findOneAndReplace({ date }, body)
-			);
-			// .deleteOne({ year, month, date });
+			await db.collection('workouts').deleteOne({ date });
 
 			console.log(
 				`Received Posted workout: Style: ${style} Date: ${date}`
 			);
 
 			await db.collection('archivedWorkouts').insertOne(body);
-			// res.json(await db.collection('workouts').insertOne(body));
+			res.json(await db.collection('workouts').insertOne(body));
 			break;
 		case 'GET':
 			body = req.body;

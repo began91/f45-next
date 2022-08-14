@@ -97,13 +97,13 @@ export default function AddWorkout({
 
 	async function postWorkout(e: React.MouseEvent<HTMLElement>) {
 		e.preventDefault();
-		console.log('Posting workout:');
-		console.log(workout);
 		const { style, date } = workout;
 		const stationList = workout.stationList.filter(
 			(_, i) => i < workout.stations
 		);
-		const dbWorkout = { style, date: date.toISOString(), stationList };
+		const dbWorkout = { style, date: date, stationList };
+		console.log('Posting workout:');
+		console.log(dbWorkout);
 		const response = await fetch('/api/workouts/', {
 			method: 'POST',
 			body: JSON.stringify(dbWorkout),
@@ -112,12 +112,13 @@ export default function AddWorkout({
 			},
 		});
 		const data = await response.json();
-		if (!data.ok) {
-			throw new Error(data.lastErrorObject);
-		} else {
-			console.log('Success!');
-			console.log(data.value);
-		}
+		console.log(data);
+		// if (!data.ok) {
+		// 	throw new Error(data.lastErrorObject);
+		// } else {
+		// 	console.log('Success!');
+		// 	console.log(data);
+		// }
 	}
 
 	const workoutInfo = [

@@ -73,7 +73,7 @@ export default function WorkoutCreator(
 				return station;
 			}
 		);
-		// time index assumes the time for each station is constant and does not change with pods or laps. The time should be explicit within the timeList for each set and rest within the station. (eg, [20,10,20,10] vice [20,10])
+		// time index assumes the time for each station is constant (may be different for sets) and does not change with pods or laps. The time should be explicit within the timeList for each set and rest within the station. (eg, [20,10,20,10] vice [20,10])
 		let timeIndex = Array.from(
 			{ length: numSets(sets, stations, laps) },
 			(_, i) => {
@@ -84,6 +84,25 @@ export default function WorkoutCreator(
 	}
 
 	switch (workoutStyle) {
+		case '3-peat':
+			stations = 10;
+			pods = 1;
+			laps = 3;
+			sets = 1;
+			timing = '45/15';
+			misc =
+				'Target Reps to hit at each station. Keep track on score card. 2 minute water break between laps.';
+			timeList = [45, 15, 120];
+			[stationIndex, timeIndex] = standardStations(
+				stations,
+				pods,
+				laps,
+				sets
+			);
+			//insert 2 minute breaks between laps
+			timeIndex[19] = 2;
+			timeIndex[39] = 2;
+			break;
 		case 'Abacus':
 			stations = 6;
 			pods = 1;
@@ -195,6 +214,29 @@ export default function WorkoutCreator(
 			misc = 'Two people on each TV';
 			timeList = [40, 15];
 			break;
+		case 'Joker':
+		case 'The Joker':
+			displayStyle = 'The Joker';
+			stations = 18;
+			pods = 6;
+			laps = 2;
+			sets = 1;
+			timing = 'Lap 1 - 55/20, Lap 2 - 25/15';
+			timeList = [55, 20, 25, 15];
+			[stationIndex, timeIndex] = standardStations(
+				stations,
+				pods,
+				laps,
+				sets
+			);
+			timeIndex = timeIndex.map((timeI, i) => {
+				if (i >= 36) {
+					return timeI + 2;
+				} else {
+					return timeI;
+				}
+			});
+			break;
 		case 'Lonestar':
 			stations = 12;
 			pods = 1;
@@ -240,6 +282,15 @@ export default function WorkoutCreator(
 			misc = 'Finish with a 2 minute plank at the end!';
 			timeList = [35, 10, 20, 10, 20, 20];
 			break;
+		case 'Panthers':
+			stations = 14;
+			pods = 1;
+			laps = 1;
+			sets = 3;
+			timing = '35/20';
+			misc = 'No water breaks';
+			timeList = [35, 20, 34, 20, 35, 20];
+			break;
 		case 'Pegasus':
 			stations = 15;
 			pods = 1;
@@ -283,6 +334,16 @@ export default function WorkoutCreator(
 				}
 			}
 			break;
+		case 'Reddiamond':
+		case 'Red Diamond':
+			displayStyle = 'Red Diamond';
+			stations = 9;
+			pods = 3;
+			laps = 1;
+			sets = 4;
+			timing = '45/15, 40/20, 35/25, 30/30';
+			timeList = [45, 15, 40, 20, 35, 25, 30, 30];
+			break;
 		case 'Redline':
 			stations = 9;
 			pods = 1;
@@ -303,6 +364,14 @@ export default function WorkoutCreator(
 			//         stationIndex[i] = stations;
 			//     }
 			// }
+			break;
+		case 'Renegade':
+			stations = 18;
+			pods = 6;
+			laps = 2;
+			sets = 1;
+			timing = '35/25';
+			timeList = [35, 25];
 			break;
 		case 'Romans':
 			stations = 9;
@@ -342,6 +411,43 @@ export default function WorkoutCreator(
 					// stationIndex[i] = stations+1;//might change to +2 and add "next pod" later
 				}
 			}
+			break;
+		case 'Socal':
+		case 'SoCal':
+			displayStyle = 'SoCal';
+			stations = 15;
+			pods = 2;
+			laps = 3;
+			sets = 1;
+			timing = 'Lap 1 - 60/30, Lap 2 - 40/20, Lap 3 - 20/10';
+			misc =
+				'6 stations per pod. 4 rounds of 3 body weight exercises at the end of each pod. 60 sec water break between pods.';
+			timeList = [60, 30, 40, 20, 20, 10, 30, 10, 20, 10, 60];
+
+			stationIndex = [
+				0, 16, 1, 16, 2, 16, 3, 16, 4, 16, 5, 16, 0, 16, 1, 16, 2, 16,
+				3, 16, 4, 16, 5, 16, 0, 16, 1, 16, 2, 16, 3, 16, 4, 16, 5, 16,
+
+				12, 13, 14, 16, 12, 13, 14, 16, 12, 13, 14, 16, 12, 13, 14, 16,
+
+				6, 16, 7, 16, 8, 16, 9, 16, 10, 16, 11, 16, 6, 16, 7, 16, 8, 16,
+				9, 16, 10, 16, 11, 16, 6, 16, 7, 16, 8, 16, 9, 16, 10, 16, 11,
+				16,
+
+				12, 13, 14, 16, 12, 13, 14, 16, 12, 13, 14, 16, 12, 13, 14,
+			];
+
+			timeIndex = [
+				0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2,
+				3, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5,
+
+				6, 6, 6, 7, 8, 8, 8, 9, 8, 8, 8, 9, 8, 8, 8, 10,
+
+				0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2,
+				3, 2, 3, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5,
+
+				6, 6, 6, 7, 8, 8, 8, 9, 8, 8, 8, 9, 8, 8, 8,
+			];
 			break;
 		case 'Specialopshollywood':
 		case 'Special Ops Hollywood':
@@ -501,6 +607,36 @@ export default function WorkoutCreator(
 				1, 0,
 			];
 			break;
+		case 'Varsity':
+			stations = 9;
+			pods = 1;
+			laps = 3;
+			sets = 3;
+			timing = 'Lap 1 - 3x 20/10, Lap 2 - 40/20, Lap 3 - 60/30';
+			misc =
+				'3 sets in the first lap, 1 set for the second and third lap';
+			timeList = [20, 10, 40, 20, 60, 30];
+			stationIndex = [
+				//lap 1 (three sets per station)
+				0, 9, 0, 9, 0, 10, 1, 9, 1, 9, 1, 10, 2, 9, 2, 9, 2, 10, 3, 9,
+				3, 9, 3, 10, 4, 9, 4, 9, 4, 10, 5, 9, 5, 9, 5, 10, 6, 9, 6, 9,
+				6, 10, 7, 9, 7, 9, 7, 10, 8, 9, 8, 9, 8, 10,
+				//lap 2 (one set)
+				0, 10, 1, 10, 2, 10, 3, 10, 4, 10, 5, 10, 6, 10, 7, 10, 8, 10,
+				//lap 3 (one set)
+				0, 10, 1, 10, 2, 10, 3, 10, 4, 10, 5, 10, 6, 10, 7, 10, 8,
+			];
+			timeIndex = [
+				//lap1
+				0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+				1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+				0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+				//lap2
+				2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
+				//lap3
+				4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4,
+			];
+			break;
 		case 'Westhollywood':
 		case 'West Hollywood':
 			displayStyle = 'West Hollywood';
@@ -534,16 +670,15 @@ export default function WorkoutCreator(
 			break;
 		case 'Loading':
 		case 'No Workout':
-			stations = '';
-			pods = '';
-			laps = '';
-			sets = '';
+			stations = 0;
+			pods = 0;
+			laps = 0;
+			sets = 0;
 			timing = '';
 			timeList = [];
 			break;
 		default:
 			throw new Error(`${style} is not a valid workout style`);
-			break;
 	}
 
 	//if station or time index hasnt been set, assume standard
@@ -567,10 +702,27 @@ export default function WorkoutCreator(
 	// stationList.push('Rest-Next Pod'); //Not sure if needed yet. will need to adjust some logic elsewhere that assumes only two things have been added to the workout list.
 	let setDurationList = timeIndex.map((tI) => timeList[tI]);
 	let duration = setDurationList.reduce((a, b) => a + b, 0);
-	let durationDisplay =
-		duration > 3600
-			? new Date(duration * 1000).toISOString().substring(11, 19)
-			: new Date(duration * 1000).toISOString().substring(14, 19);
+	let durationDisplay;
+	try {
+		durationDisplay =
+			duration > 3600
+				? new Date(duration * 1000).toISOString().substring(11, 19)
+				: new Date(duration * 1000).toISOString().substring(14, 19);
+	} catch (error) {
+		console.log(style);
+		console.log(duration);
+		throw new Error(error);
+	}
+
+	if (stationIndex.length !== timeIndex.length) {
+		throw new Error(
+			`Station and time index lists have dissimilar lenghts. Workout style: ${style}.
+			
+			stationIndex.length = ${stationIndex.length}
+			
+			timeIndex.length = ${timeIndex.length}`
+		);
+	}
 
 	return {
 		date: date instanceof Date ? date.toISOString() : date,
