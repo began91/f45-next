@@ -1,0 +1,58 @@
+.infoGrid {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr 3fr;
+	gap: 0px 10px;
+}
+
+.span3 {
+	grid-column: span 3;
+}
+
+.stations {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	align-content: flex-start;
+	width: 100%;
+	justify-content: center;
+}
+
+.station {
+	width: auto;
+	position: relative;
+	font-size: 16px;
+	line-height: 1;
+	padding: 2px;
+}
+
+.alternateGray:nth-child(2n + 1) {
+	background-color: lightgray;
+}
+
+.stationInput {
+	width: 100%;
+	resize: none;
+	padding: 2px;
+	border-radius: 2px;
+	border: 1px solid gray;
+}
+
+.clearStation {
+	position: absolute;
+	cursor: pointer;
+	z-index: 2;
+	top: 50%;
+	transform: translate(0, -50%);
+	font-size: 12px;
+	width: 14px;
+	height: 14px;
+	right: 2.5%;
+	background-color: rgba(0, 0, 0, 0.2);
+	border: none;
+	border-radius: 50%;
+	opacity: 0.5;
+	margin-top: auto;
+	margin-bottom: auto;
+	padding: 0px;
+	vertical-align: middle;
+}

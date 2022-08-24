@@ -1,47 +1,17 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import Layout from 'components/Layout';
-// import { connectToDatabase } from 'lib/mongodb';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
-import styles from 'styles/daily.module.css';
-import cn from 'classnames';
 import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { getWorkoutByDate, getAllWorkouts } from 'lib/mongodb';
-import { useRouter } from 'next/router';
+import WorkoutInfo from 'components/WorkoutInfo';
 
 interface dailyType {
 	workout: WorkoutType;
-	useWorkout: [
-		WorkoutType,
-		Dispatch<SetStateAction<WorkoutType | undefined>>
-	];
+	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 }
 
 export default function Daily({ workout, useWorkout }: dailyType) {
-	const router = useRouter();
-
-	const workoutInfo = [
-		'displayStyle',
-		'stations',
-		'pods',
-		'laps',
-		'sets',
-		'timing',
-		'durationDisplay',
-		'misc',
-	];
-
-	const workoutInfoLabels = [
-		'Style',
-		'Stations',
-		'Pods',
-		'Laps',
-		'Sets',
-		'Timing',
-		'Duration',
-		'Misc',
-	];
-
 	const setWorkout = useWorkout[1];
 	useEffect(() => {
 		setWorkout(workout);
@@ -51,7 +21,7 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 
 	return (
 		<Layout page="Day" date={date}>
-			<div className={styles.infoGrid}>
+			{/* <div className={styles.infoGrid}>
 				<b className={styles.label}>Date: </b>
 				<div className={cn(styles.info, styles.span3)}>
 					{date.toLocaleString(undefined, {
@@ -84,7 +54,8 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 							{station}
 						</li>
 					))}
-			</ol>
+			</ol> */}
+			<WorkoutInfo useWorkout={useWorkout} />
 			<Link href="/custom">
 				<button>Create a custom workout using this format-&gt;</button>
 			</Link>

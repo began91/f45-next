@@ -1,12 +1,15 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { workoutStyleList, getLastWorkoutByStyle } from 'src/helpers/lists';
+// import { workoutStyleList, getLastWorkoutByStyle } from 'src/helpers/lists';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
 import styles from 'styles/custom.module.css';
 import cn from 'classnames';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import WorkoutInfo from 'components/WorkoutInfo';
+import { GetStaticProps } from 'next';
+import { getUniqueWorkoutStyles } from 'lib/mongodb';
 
 interface CustomType {
 	useDate: [Date, Dispatch<SetStateAction<Date | undefined>>];
@@ -15,83 +18,86 @@ interface CustomType {
 		Dispatch<SetStateAction<WorkoutType | undefined>>
 	];
 	snd: HTMLAudioElement;
+	workoutStyleList: string[];
 }
 
 export default function Custom({
 	useDate,
 	useWorkout: [workout, setWorkout],
 	snd,
+	workoutStyleList,
 }: CustomType) {
 	// const [workout, setWorkout] = useState(getWorkoutByDate(date));
 	const { data: session, status } = useSession();
 	const date = useDate[0];
+	console.log(workout);
 
-	const workoutInfo = [
-		'stations',
-		'pods',
-		'laps',
-		'sets',
-		'timing',
-		'durationDisplay',
-	];
+	// const workoutInfo = [
+	// 	'stations',
+	// 	'pods',
+	// 	'laps',
+	// 	'sets',
+	// 	'timing',
+	// 	'durationDisplay',
+	// ];
 
-	const workoutInfoLabels = [
-		'Stations',
-		'Pods',
-		'Laps',
-		'Sets',
-		'Timing',
-		'Duration',
-	];
+	// const workoutInfoLabels = [
+	// 	'Stations',
+	// 	'Pods',
+	// 	'Laps',
+	// 	'Sets',
+	// 	'Timing',
+	// 	'Duration',
+	// ];
 
-	function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
-		const newDate = new Date();
-		const target = e.target as HTMLSelectElement;
-		const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
-		const newWorkout = CreateWorkout(
-			newDate,
-			target.value,
-			lastWorkoutByStyle?.stationList.filter(
-				(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-			) || []
-		);
-		setWorkout(newWorkout);
-	}
+	// function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
+	// 	const newDate = new Date();
+	// 	const target = e.target as HTMLSelectElement;
+	// 	const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
+	// 	const newWorkout = CreateWorkout(
+	// 		newDate,
+	// 		target.value,
+	// 		lastWorkoutByStyle?.stationList.filter(
+	// 			(_, i) => i < (lastWorkoutByStyle?.stations || 0)
+	// 		) || []
+	// 	);
+	// 	setWorkout(newWorkout);
+	// }
 
-	const resetAll = () => {
-		const lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
-		const newWorkout = CreateWorkout(
-			date,
-			workout.style,
-			lastWorkoutByStyle?.stationList.filter(
-				(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-			) || []
-		);
-		setWorkout(newWorkout);
-	};
+	// const resetAll = () => {
+	// 	const lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
+	// 	const newWorkout = CreateWorkout(
+	// 		date,
+	// 		workout.style,
+	// 		lastWorkoutByStyle?.stationList.filter(
+	// 			(_, i) => i < (lastWorkoutByStyle?.stations || 0)
+	// 		) || []
+	// 	);
+	// 	setWorkout(newWorkout);
+	// };
 
-	const clearAll = () => {
-		const newStationList = workout.stationList.map((station, i) =>
-			i < workout.stations ? '' : station
-		);
-		setWorkout({ ...workout, stationList: newStationList });
-	};
+	// const clearAll = () => {
+	// 	const newStationList = workout.stationList.map((station, i) =>
+	// 		i < workout.stations ? '' : station
+	// 	);
+	// 	setWorkout({ ...workout, stationList: newStationList });
+	// };
 
-	const handleChange = (
-		e:
-			| React.ChangeEvent<HTMLTextAreaElement>
-			| React.MouseEvent<HTMLButtonElement>
-	) => {
-		const target = e.target as HTMLTextAreaElement | HTMLButtonElement;
-		if (target.tagName === 'TEXTAREA') {
-			target.style.height = 'inherit';
-			target.style.height = +target.scrollHeight - 5 + 'px';
-		}
-		const i = Number(target.id.split('_').pop());
-		const newStationList = workout.stationList;
-		newStationList[i] = target.value;
-		setWorkout({ ...workout, stationList: newStationList });
-	};
+	// const handleChange = (
+	// 	e:
+	// 		| React.ChangeEvent<HTMLTextAreaElement>
+	// 		| React.MouseEvent<HTMLButtonElement>
+	// ) => {
+	// 	const target = e.target as HTMLTextAreaElement | HTMLButtonElement;
+	// 	if (target.tagName === 'TEXTAREA') {
+	// 		target.style.height = 'inherit';
+	// 		target.style.height = +target.scrollHeight - 5 + 'px';
+	// 	}
+	// 	const i = Number(target.id.split('_').pop());
+	// 	const newStationList = workout.stationList;
+	// 	newStationList[i] = target.value;
+	// 	setWorkout({ ...workout, stationList: newStationList });
+	// };
 
 	async function startWorkout() {
 		snd.play();
@@ -105,16 +111,17 @@ export default function Custom({
 		//use the current workout
 		//get the user if authentiicated
 		//post the workout to userWorkouts, referenced to the user._id
-		const response = await fetch('api/userWorkouts', {
-			method: 'POST',
-			body: JSON.stringify(postWorkout),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
 
-		const data = await response.json();
-		console.log(data);
+		// const response = await fetch('api/userWorkouts', {
+		// 	method: 'POST',
+		// 	body: JSON.stringify(postWorkout),
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 	},
+		// });
+
+		// const data = await response.json();
+		// console.log(data);
 	}
 
 	useEffect(() => {
@@ -133,7 +140,11 @@ export default function Custom({
 	return (
 		<Layout page="Custom" date={date}>
 			<h2 className={utilStyles.headingMd}>Create Custom Workout:</h2>
-			<label htmlFor="workoutStyle">
+			<WorkoutInfo
+				useWorkout={[workout, setWorkout]}
+				workoutStyleList={workoutStyleList}
+			/>
+			{/* <label htmlFor="workoutStyle">
 				<b>Workout Style: </b>
 			</label>
 			<select
@@ -191,10 +202,20 @@ export default function Custom({
 							</button>
 						</li>
 					))}
-			</ol>
+			</ol> */}
 			<Link href="/workout">
 				<button onClick={startWorkout}>Start Workout</button>
 			</Link>
 		</Layout>
 	);
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+	const workoutStyleList = await getUniqueWorkoutStyles();
+
+	return {
+		props: {
+			workoutStyleList,
+		},
+	};
+};

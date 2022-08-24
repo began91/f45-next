@@ -24,7 +24,7 @@ export interface WorkoutType {
 }
 
 export default function WorkoutCreator(
-	date: Date,
+	date: Date | string,
 	workoutStyle: string,
 	stationList: string[] = []
 ) {
