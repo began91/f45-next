@@ -1,7 +1,7 @@
 import Layout from 'components/Layout';
 import NewCalendar from 'components/NewCalendar';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { areDatesEqual } from 'src/helpers/areDatesEqual';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
@@ -40,18 +40,21 @@ export default function AddWorkout({
 	ISOdate,
 }: AddWorkoutType) {
 	//find the weekly workout on the supplied date, or return undefined if none exists.
-	function getWeeklyWorkoutOn(
-		date: Date | string,
-		backupStyle = 'Afterglow'
-	) {
-		const workout: WorkoutType =
-			weeklyWorkouts.find(
-				(dailyWorkout) =>
-					dailyWorkout &&
-					areDatesEqual(new Date(dailyWorkout.date), new Date(date))
-			) || CreateWorkout(new Date(date), backupStyle, []);
-		return workout;
-	}
+	const getWeeklyWorkoutOn = useCallback(
+		(date: Date | string, backupStyle = 'Afterglow') => {
+			const workout: WorkoutType =
+				weeklyWorkouts.find(
+					(dailyWorkout) =>
+						dailyWorkout &&
+						areDatesEqual(
+							new Date(dailyWorkout.date),
+							new Date(date)
+						)
+				) || CreateWorkout(new Date(date), backupStyle, []);
+			return workout;
+		},
+		[weeklyWorkouts]
+	);
 
 	//if SSG page, get the workout that matches the currently selected date, otherwise default to an Afterglow workout
 	const [workout, setWorkout] = useState(getWeeklyWorkoutOn(ISOdate));
@@ -59,7 +62,7 @@ export default function AddWorkout({
 	//if the date changes (new calendar page selected), get the workout from that date, otherwise default to Afterglow
 	useEffect(() => {
 		setWorkout(getWeeklyWorkoutOn(ISOdate));
-	}, [ISOdate, weeklyWorkouts, getWeeklyWorkoutOn]);
+	}, [ISOdate, getWeeklyWorkoutOn]);
 
 	//keep the input text areas to the correct size
 	useEffect(() => {
