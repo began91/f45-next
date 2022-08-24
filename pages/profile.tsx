@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const session = await unstable_getServerSession(
 		context.req as NextApiRequest,
-		context.res as NextApiResponse<any>,
+		context.res as NextApiResponse,
 		authOptions as NextAuthOptions
 	);
 	console.log('session is:');

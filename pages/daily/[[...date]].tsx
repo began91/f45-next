@@ -8,7 +8,10 @@ import WorkoutInfo from 'components/WorkoutInfo';
 
 interface dailyType {
 	workout: WorkoutType;
-	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
+	useWorkout: [
+		WorkoutType,
+		Dispatch<SetStateAction<WorkoutType | undefined>>
+	];
 }
 
 export default function Daily({ workout, useWorkout }: dailyType) {
@@ -69,7 +72,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	}
 
 	// const { getWorkoutByDate } = require('lib/mongodb');
-	let workout = await getWorkoutByDate(new Date(year, month - 1, date));
+	const workout = await getWorkoutByDate(new Date(year, month - 1, date));
 
 	return {
 		props: {

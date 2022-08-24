@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import {
+	useState,
+	useEffect,
+	useCallback,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import styles from '../styles/workout.module.css';
 import Beep from '../src/helpers/Beep';
 import ExitMenu from '../components/WorkoutScreen/ExitMenu';
@@ -11,11 +17,18 @@ import SetDisplay from '../components/WorkoutScreen/SetDisplay';
 import cn from 'classnames';
 import Image from 'next/image';
 import logos from '../public/workout-logos/workout-logos';
+import { WorkoutType } from 'src/helpers/CreateWorkout';
 
-export default function WorkoutScreen({
-	useWorkout: [workout, setWorkout],
-	snd,
-}) {
+interface WorkoutScreenType {
+	useWorkout: [
+		WorkoutType,
+		Dispatch<SetStateAction<WorkoutType | undefined>>
+	];
+	snd: HTMLAudioElement;
+}
+
+export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
+	const workout = useWorkout[0];
 	//state
 	const [mainTimer, setMainTimer] = useState(0);
 	const [isActive, setIsActive] = useState(true);
@@ -24,8 +37,8 @@ export default function WorkoutScreen({
 	const [isComplete, setIsComplete] = useState(false);
 
 	//derivatives of state
-	let currentSetDuration = workout.timeList[workout.timeIndex[currentSet]];
-	let isWork = workout.stationIndex[currentSet] < workout.stations;
+	const currentSetDuration = workout.timeList[workout.timeIndex[currentSet]];
+	const isWork = workout.stationIndex[currentSet] < workout.stations;
 
 	const endWorkout = useCallback(() => {
 		setIsComplete(true);
@@ -49,7 +62,7 @@ export default function WorkoutScreen({
 
 	useEffect(() => {
 		// https://www.geeksforgeeks.org/create-a-stop-watch-using-reactjs/
-		let interval = null;
+		let interval: NodeJS.Timer | undefined;
 
 		if (currentSet >= workout.numSets) {
 			endWorkout();
@@ -67,7 +80,7 @@ export default function WorkoutScreen({
 		setIsActive(!isActive);
 	};
 
-	const resetWorkout = (e) => {
+	const resetWorkout = () => {
 		setIsComplete(false);
 		setMainTimer(0);
 		setIsActive(true);

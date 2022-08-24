@@ -100,8 +100,8 @@ function DaySquare({
 
 export default function NewCalendar({
 	date, //date from state
-	month, //monththly Workouts
-	week, //weeklyWorkouts
+	month, //monththly Workouts or undefined
+	week, //weeklyWorkouts or undefined
 	db, //db update page boolean
 }: {
 	date: Date;
@@ -113,7 +113,7 @@ export default function NewCalendar({
 	let monthRow: ReactElement;
 	let calendarGrid: ReactElement | ReactElement[];
 
-	if (!!month) {
+	if (month) {
 		//for month view, simply display the month of the date in state, including year.
 		monthRow = (
 			<div className={styles.monthRow}>
@@ -133,7 +133,7 @@ export default function NewCalendar({
 				activeDate={date}
 			/>
 		));
-	} else if (!!week) {
+	} else if (week) {
 		const calendarWeek = date.getWeek();
 		//for week view, count the number of days in the month of the first day of the week
 		const daysInMonth1 = date
@@ -211,7 +211,7 @@ export default function NewCalendar({
 	let hrefPage: string;
 	if (db) {
 		hrefPage = 'add-workout';
-	} else if (!!month) {
+	} else if (month) {
 		hrefPage = 'schedule';
 	} else {
 		hrefPage = 'weekly';

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { useSession } from 'next-auth/react';
 import { ReactNode } from 'react';
+import { ConnectionCheckOutStartedEvent } from 'mongodb';
 
 const name = 'Fit 45-Minute Workout Timer';
 export const siteTitle = 'Fit 45-Minute Workout Timer';
@@ -56,19 +57,19 @@ function NavBar({ page, date }: NavBarType) {
 		);
 	}
 	//year,month,day to add to daily link
-	let datePathString = `/${date.getFullYear()}/${
+	const datePathString = `/${date.getFullYear()}/${
 		date.getMonth() + 1
 	}/${date.getDate()}`;
 
 	//links to iterate over
-	let href = [
+	const href = [
 		'/',
 		'/schedule' + datePathString,
 		'/weekly' + datePathString,
 		'/daily' + datePathString,
 		'/custom',
 	];
-	let pageNames = ['Home', 'Month', 'Week', 'Day', 'Custom'];
+	const pageNames = ['Home', 'Month', 'Week', 'Day', 'Custom'];
 	return (
 		<nav className={styles.navList}>
 			{pageNames.map((title, i) => {

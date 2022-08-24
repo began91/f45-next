@@ -1,4 +1,4 @@
-import { MongoClient, MongoClientOptions, Db, ObjectId } from 'mongodb';
+import { MongoClient, MongoClientOptions, Db } from 'mongodb';
 import { areDatesEqual } from 'src/helpers/areDatesEqual';
 // import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 // import Workout from 'src/helpers/CreateWorkout.js';
@@ -45,7 +45,7 @@ const options = {
 let client;
 let clientPromise;
 
-let globalWithMongo = global as typeof globalThis & {
+const globalWithMongo = global as typeof globalThis & {
 	_mongoClientPromise: Promise<MongoClient>;
 };
 
@@ -94,7 +94,7 @@ export async function getWorkoutByDate(date: Date) {
 export async function getWorkoutByWeek(date: Date) {
 	const week = date.getWeek();
 
-	const { db, client } = await connectToDatabase();
+	const { db } = await connectToDatabase();
 
 	const workouts = await db
 		.collection('workouts')
@@ -117,7 +117,7 @@ export async function getWorkoutByWeek(date: Date) {
 export async function getWorkoutByMonth(date: Date) {
 	const calendar = date.getCalendar();
 
-	const { db, client } = await connectToDatabase();
+	const { db } = await connectToDatabase();
 
 	const workouts = await db
 		.collection('workouts')
@@ -143,7 +143,7 @@ export async function getWorkoutByMonth(date: Date) {
 }
 
 export async function getUniqueWorkoutStyles() {
-	const { db, client } = await connectToDatabase();
+	const { db } = await connectToDatabase();
 
 	const uniqueStyles = await db.collection('workouts').distinct('style');
 

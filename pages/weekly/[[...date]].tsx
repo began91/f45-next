@@ -9,6 +9,7 @@ import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
+import { getAllWorkouts, getWorkoutByWeek } from 'lib/mongodb';
 // import { getAllWorkouts } from 'lib/mongodb';
 
 interface WorkoutBriefType {
@@ -81,11 +82,7 @@ export default function Weekly({ weeklyWorkouts, date }: WeeklyType) {
 
 	return (
 		<Layout page="Week" date={date}>
-			<NewCalendar
-				calendarWeek={calendarWeek}
-				week={weeklyWorkouts}
-				date={date}
-			/>
+			<NewCalendar week={weeklyWorkouts} date={date} />
 			{weeklyWorkouts.map((workout: WorkoutType, i: number) => (
 				<WorkoutBrief
 					workout={workout}
@@ -98,8 +95,7 @@ export default function Weekly({ weeklyWorkouts, date }: WeeklyType) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { getAllWorkouts } = require('lib/mongodb');
-	const workouts = await getAllWorkouts();
+	const workouts = (await getAllWorkouts()) as WorkoutType[];
 	const paths = workouts.map((workout: WorkoutType) => {
 		const date = new Date(workout.date);
 		return {
@@ -130,12 +126,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		); //change to three separate params [year]/[month]/[date]
 	}
 
-	const { getWorkoutByWeek } = require('lib/mongodb');
-	let weeklyWorkouts: WorkoutType[] = await getWorkoutByWeek(
+	let weeklyWorkouts = await getWorkoutByWeek(
 		new Date(year, month - 1, date)
 	);
 	weeklyWorkouts = weeklyWorkouts.map((workout) =>
-		!!workout
+		workout
 			? CreateWorkout(workout.date, workout.style, workout.stationList)
 			: null
 	);

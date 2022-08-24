@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import Layout from '../components/Layout';
 // import { workoutStyleList, getLastWorkoutByStyle } from 'src/helpers/lists';
-import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
+import { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
-import styles from 'styles/custom.module.css';
-import cn from 'classnames';
+// import styles from 'styles/custom.module.css';
+// import cn from 'classnames';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import WorkoutInfo from 'components/WorkoutInfo';
