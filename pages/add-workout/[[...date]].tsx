@@ -42,7 +42,7 @@ export default function AddWorkout({
 	//find the weekly workout on the supplied date, or return undefined if none exists.
 	function getWeeklyWorkoutOn(
 		date: Date | string,
-		backupStyle: string = 'Afterglow'
+		backupStyle = 'Afterglow'
 	) {
 		const workout: WorkoutType =
 			weeklyWorkouts.find(
@@ -59,7 +59,7 @@ export default function AddWorkout({
 	//if the date changes (new calendar page selected), get the workout from that date, otherwise default to Afterglow
 	useEffect(() => {
 		setWorkout(getWeeklyWorkoutOn(ISOdate));
-	}, [ISOdate, weeklyWorkouts]);
+	}, [ISOdate, weeklyWorkouts, getWeeklyWorkoutOn]);
 
 	//keep the input text areas to the correct size
 	useEffect(() => {

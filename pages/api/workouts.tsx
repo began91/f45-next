@@ -1,6 +1,5 @@
 import { connectToDatabase } from 'lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import CreateWorkout from 'src/helpers/CreateWorkout';
 
 export default async function handler(
 	req: NextApiRequest,
