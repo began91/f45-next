@@ -4,7 +4,7 @@ import React from 'react';
 interface LinkIfType {
 	href: string;
 	children: any;
-	isLink: boolean;
+	isLink?: boolean;
 }
 
 export default function LinkIf({ href, children, isLink = true }: LinkIfType) {
