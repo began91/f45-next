@@ -21,40 +21,6 @@ export default function Daily({ workout, useWorkout }: dailyType) {
 
 	return (
 		<Layout page="Day" date={date}>
-			{/* <div className={styles.infoGrid}>
-				<b className={styles.label}>Date: </b>
-				<div className={cn(styles.info, styles.span3)}>
-					{date.toLocaleString(undefined, {
-						weekday: 'long',
-						month: 'long',
-						day: 'numeric',
-						year: 'numeric',
-					})}
-				</div>
-
-				{workoutInfo.map((info, i) => (
-					<React.Fragment key={i}>
-						<b className={styles.label}>{workoutInfoLabels[i]}: </b>
-						<div
-							className={cn(styles.info, {
-								[styles.span3]: ![1, 2, 3, 4].includes(i),
-							})}
-						>
-							{workout[info]}
-						</div>
-					</React.Fragment>
-				))}
-			</div>
-			<b className={styles.label}>Exercises:</b>
-			<ol className={styles.info} id="stationList">
-				{workout.stationList
-					.filter((station, i) => i < workout.stations)
-					.map((station, i) => (
-						<li key={i} className={styles.station}>
-							{station}
-						</li>
-					))}
-			</ol> */}
 			<WorkoutInfo useWorkout={useWorkout} />
 			<Link href="/custom">
 				<button>Create a custom workout using this format-&gt;</button>
