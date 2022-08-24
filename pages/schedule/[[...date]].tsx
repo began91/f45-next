@@ -12,7 +12,6 @@ interface ScheduleType {
 
 export default function Schedule({ monthlyWorkouts, date }: ScheduleType) {
 	date = new Date(date);
-	const calendar = date.getCalendar();
 
 	const router = useRouter();
 	if (router.isFallback) {
@@ -76,7 +75,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 						workout.date,
 						workout.style,
 						workout.stationList
-				  )
+				  ) //eslint-disable-line no-mixed-spaces-and-tabs
 				: null
 		)
 	);

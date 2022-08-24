@@ -4,11 +4,9 @@ import Head from 'next/head';
 import utilStyles from '../styles/utils.module.css';
 import LinkIf from 'components/LinkIf';
 import Link from 'next/link';
-// import logos from '../public/workout-logos/workout-logos';
 import cn from 'classnames';
 import { useSession } from 'next-auth/react';
 import { ReactNode } from 'react';
-import { ConnectionCheckOutStartedEvent } from 'mongodb';
 
 const name = 'Fit 45-Minute Workout Timer';
 export const siteTitle = 'Fit 45-Minute Workout Timer';

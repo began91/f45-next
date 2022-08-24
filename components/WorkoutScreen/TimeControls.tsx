@@ -27,13 +27,11 @@ export default function TimeControls({
 		e.preventDefault();
 		e.stopPropagation();
 		// console.log('single')
-		if (currentSet === 0 && +target.value === -1) {
-			{
-			}
-			//dont go back if its the first set and its trying to go back
-		} else if (currentSet >= workout.numSets - 1 && +target.value === 1) {
+		if (currentSet >= workout.numSets - 1 && +target.value === 1) {
+			//if on the last set and trying to advance, end workout
 			endWorkout();
-		} else {
+		} else if (currentSet !== 0 || +target.value === 1) {
+			//prevent change if on the current set and trying to go backwards. (DeMorgans Laws)
 			goToSet(currentSet + +target.value);
 		}
 	};

@@ -81,7 +81,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 						workout.date,
 						workout.style,
 						workout.stationList
-				  )
+				  ) //eslint-disable-line no-mixed-spaces-and-tabs
 				: null,
 		},
 		revalidate: 1,
