@@ -16,7 +16,7 @@ import TimeCircle from '../components/WorkoutScreen/TimeCircle';
 import SetDisplay from '../components/WorkoutScreen/SetDisplay';
 import cn from 'classnames';
 import Image from 'next/image';
-import logos from '../public/workout-logos/workout-logos';
+import defaultLogo from 'public/workout-logos/defaultLogo.png';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
 
 interface WorkoutScreenType {
@@ -112,7 +112,7 @@ export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
 				/>
 				<div className={styles.imgContainer}>
 					<Image
-						src={workout.logo ? workout.logo : logos.defaultLogo}
+						src={workout.logo ? workout.logo : defaultLogo}
 						layout="responsive"
 						alt="logo"
 					/>

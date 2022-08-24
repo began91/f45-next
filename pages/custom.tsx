@@ -13,10 +13,7 @@ import { getUniqueWorkoutStyles } from 'lib/mongodb';
 
 interface CustomType {
 	useDate: [Date, Dispatch<SetStateAction<Date | undefined>>];
-	useWorkout: [
-		WorkoutType,
-		Dispatch<SetStateAction<WorkoutType | undefined>>
-	];
+	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 	snd: HTMLAudioElement;
 	workoutStyleList: string[];
 }

@@ -8,10 +8,7 @@ import WorkoutInfo from 'components/WorkoutInfo';
 
 interface dailyType {
 	workout: WorkoutType;
-	useWorkout: [
-		WorkoutType,
-		Dispatch<SetStateAction<WorkoutType | undefined>>
-	];
+	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 }
 
 export default function Daily({ workout, useWorkout }: dailyType) {

@@ -3,7 +3,7 @@ import React from 'react';
 
 interface LinkIfType {
 	href: string;
-	children: any;
+	children: React.ReactNode;
 	isLink?: boolean;
 }
 

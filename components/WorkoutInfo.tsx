@@ -6,7 +6,7 @@ import cn from 'classnames';
 interface WorkoutInfoType {
 	useWorkout: [
 		WorkoutType,
-		React.Dispatch<React.SetStateAction<WorkoutType | undefined>>
+		React.Dispatch<React.SetStateAction<WorkoutType>>
 	];
 	workoutStyleList?: string[]; //providing the style list assumes an editable workout info is desired.
 	getWeeklyWorkoutOn?(date: Date | string, backupStyle?: string): WorkoutType;

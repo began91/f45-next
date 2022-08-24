@@ -711,7 +711,11 @@ export default function WorkoutCreator(
 	} catch (error) {
 		console.log(style);
 		console.log(duration);
-		throw new Error(error);
+		if (error instanceof Error) {
+			throw new Error(error.message);
+		} else {
+			throw new Error('Unknown Error');
+		}
 	}
 
 	if (stationIndex.length !== timeIndex.length) {

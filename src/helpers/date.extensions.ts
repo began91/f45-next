@@ -53,7 +53,7 @@ Date.prototype.getCalendar = function (this: Date) {
 				weekStart.getMonth(),
 				weekStart.getDate() + i
 			);
-			week[i].isThisMonth = week[i].getMonth() === this.getMonth();
+			// week[i].isThisMonth = week[i].getMonth() === this.getMonth();
 		}
 		return week;
 	});
