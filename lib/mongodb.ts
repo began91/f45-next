@@ -63,21 +63,21 @@ if (process.env.NODE_ENV === 'development') {
 export default clientPromise;
 
 export async function getAllWorkouts() {
-	const { db, client } = await connectToDatabase();
+	const { db } = await connectToDatabase();
 	const workouts = await db
 		.collection('workouts')
 		.find({})
 		.project({ _id: 0 })
 		.toArray();
 
-	client.close();
+	// client.close();
 	return Promise.all(workouts);
 }
 
 export async function getWorkoutByDate(date: Date) {
 	// const newDate = new Date(year, month - 1, date);
 
-	const { db, client } = await connectToDatabase();
+	const { db } = await connectToDatabase();
 
 	const workout = await db
 		.collection('workouts')
@@ -87,7 +87,7 @@ export async function getWorkoutByDate(date: Date) {
 	// 	(await workout)._id = '';
 	// }
 
-	client.close();
+	// client.close();
 	return workout;
 }
 

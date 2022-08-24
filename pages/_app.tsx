@@ -5,12 +5,14 @@ import { SessionProvider } from 'next-auth/react';
 import 'src/helpers/date.extensions';
 import type { AppProps } from 'next/app';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
+import { GetStaticProps } from 'next';
+import { getWorkoutByDate } from 'lib/mongodb';
 
 // Data Prototypes
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const useDate = useState(new Date());
-	const useWorkout = useState(null as unknown as WorkoutType);
+	const useWorkout = useState(pageProps.workout);
 
 	const [snd, setSnd] = useState(null as unknown as HTMLAudioElement);
 
@@ -37,3 +39,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+
+export const getStaticProps: GetStaticProps = async () => {
+	const date = new Date();
+	const workout = await getWorkoutByDate(date);
+	return {
+		props: {
+			workout,
+		},
+	};
+};

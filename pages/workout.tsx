@@ -24,6 +24,7 @@ interface WorkoutScreenType {
 		WorkoutType,
 		Dispatch<SetStateAction<WorkoutType | undefined>>
 	];
+	todaysWorkout: WorkoutType;
 	snd: HTMLAudioElement;
 }
 
@@ -156,3 +157,5 @@ export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
 		</div>
 	);
 }
+
+// export const getServerSideProps()

@@ -2,7 +2,7 @@ import Layout from 'components/Layout';
 import NewCalendar from 'components/NewCalendar';
 import styles from 'styles/weekly.module.css';
 import utilStyles from 'styles/utils.module.css';
-import logos from 'public/workout-logos/workout-logos';
+import defaultLogo from 'public/workout-logos/defaultLogo.png';
 import Image from 'next/image';
 import LinkIf from 'components/LinkIf';
 import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
@@ -38,7 +38,7 @@ function WorkoutBrief({ workout, date }: WorkoutBriefType) {
 				<div className={styles.logoContainer}>
 					<Image
 						priority
-						src={workout?.logo || logos.defaultLogo}
+						src={workout?.logo || defaultLogo}
 						layout="responsive"
 						alt="logo"
 						className={styles.logo}
