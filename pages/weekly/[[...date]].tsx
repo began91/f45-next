@@ -10,6 +10,8 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
 import { getAllWorkouts, getWorkoutByWeek } from 'lib/mongodb';
+import { areDatesEqual } from 'src/helpers/areDatesEqual';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 // import { getAllWorkouts } from 'lib/mongodb';
 
 interface WorkoutBriefType {
@@ -63,11 +65,24 @@ function WorkoutBrief({ workout, date }: WorkoutBriefType) {
 interface WeeklyType {
 	weeklyWorkouts: WorkoutType[];
 	date: Date;
+	workout: WorkoutType;
+	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 }
 
-export default function Weekly({ weeklyWorkouts, date }: WeeklyType) {
+export default function Weekly({
+	weeklyWorkouts,
+	date,
+	workout,
+	useWorkout,
+}: WeeklyType) {
 	// const selectedDate = new Date(year, month - 1, date);
 	date = new Date(date);
+
+	const setWorkout = useWorkout[1];
+
+	useEffect(() => {
+		setWorkout(workout);
+	}, [workout, setWorkout]);
 	const calendarWeek = date.getWeek();
 
 	const router = useRouter();
@@ -135,10 +150,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 			: null
 	);
 
+	const workout =
+		weeklyWorkouts.find((workout) =>
+			areDatesEqual(
+				new Date(year, month - 1, date),
+				new Date(workout?.date)
+			)
+		) || CreateWorkout(new Date(year, month - 1, date), 'Abacus', []);
+
 	return {
 		props: {
 			weeklyWorkouts,
 			date: new Date(year, month - 1, date).toISOString(),
+			workout,
 		},
 	};
 };

@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import Layout from '../components/Layout';
 // import { workoutStyleList, getLastWorkoutByStyle } from 'src/helpers/lists';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import utilStyles from 'styles/utils.module.css';
 // import styles from 'styles/custom.module.css';
 // import cn from 'classnames';
@@ -9,13 +9,14 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import WorkoutInfo from 'components/WorkoutInfo';
 import { GetStaticProps } from 'next';
-import { getUniqueWorkoutStyles } from 'lib/mongodb';
+import { getUniqueWorkoutStyles, getWorkoutByDate } from 'lib/mongodb';
 
 interface CustomType {
 	useDate: [Date, Dispatch<SetStateAction<Date | undefined>>];
 	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 	snd: HTMLAudioElement;
 	workoutStyleList: string[];
+	todaysWorkout: WorkoutType;
 }
 
 export default function Custom({
@@ -23,78 +24,15 @@ export default function Custom({
 	useWorkout: [workout, setWorkout],
 	snd,
 	workoutStyleList,
+	todaysWorkout,
 }: CustomType) {
 	// const [workout, setWorkout] = useState(getWorkoutByDate(date));
 	const { data: session, status } = useSession();
 	const date = useDate[0];
-	console.log(workout);
 
-	// const workoutInfo = [
-	// 	'stations',
-	// 	'pods',
-	// 	'laps',
-	// 	'sets',
-	// 	'timing',
-	// 	'durationDisplay',
-	// ];
-
-	// const workoutInfoLabels = [
-	// 	'Stations',
-	// 	'Pods',
-	// 	'Laps',
-	// 	'Sets',
-	// 	'Timing',
-	// 	'Duration',
-	// ];
-
-	// function setWorkoutStyle(e: React.ChangeEvent<HTMLElement>) {
-	// 	const newDate = new Date();
-	// 	const target = e.target as HTMLSelectElement;
-	// 	const lastWorkoutByStyle = getLastWorkoutByStyle(target.value);
-	// 	const newWorkout = CreateWorkout(
-	// 		newDate,
-	// 		target.value,
-	// 		lastWorkoutByStyle?.stationList.filter(
-	// 			(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-	// 		) || []
-	// 	);
-	// 	setWorkout(newWorkout);
-	// }
-
-	// const resetAll = () => {
-	// 	const lastWorkoutByStyle = getLastWorkoutByStyle(workout.style);
-	// 	const newWorkout = CreateWorkout(
-	// 		date,
-	// 		workout.style,
-	// 		lastWorkoutByStyle?.stationList.filter(
-	// 			(_, i) => i < (lastWorkoutByStyle?.stations || 0)
-	// 		) || []
-	// 	);
-	// 	setWorkout(newWorkout);
-	// };
-
-	// const clearAll = () => {
-	// 	const newStationList = workout.stationList.map((station, i) =>
-	// 		i < workout.stations ? '' : station
-	// 	);
-	// 	setWorkout({ ...workout, stationList: newStationList });
-	// };
-
-	// const handleChange = (
-	// 	e:
-	// 		| React.ChangeEvent<HTMLTextAreaElement>
-	// 		| React.MouseEvent<HTMLButtonElement>
-	// ) => {
-	// 	const target = e.target as HTMLTextAreaElement | HTMLButtonElement;
-	// 	if (target.tagName === 'TEXTAREA') {
-	// 		target.style.height = 'inherit';
-	// 		target.style.height = +target.scrollHeight - 5 + 'px';
-	// 	}
-	// 	const i = Number(target.id.split('_').pop());
-	// 	const newStationList = workout.stationList;
-	// 	newStationList[i] = target.value;
-	// 	setWorkout({ ...workout, stationList: newStationList });
-	// };
+	useEffect(() => {
+		setWorkout(workout || todaysWorkout);
+	});
 
 	async function startWorkout() {
 		snd.play();
@@ -105,20 +43,6 @@ export default function Custom({
 			//get the user id? perhaps the user id should be stored in the session. We'll use email for now.
 			postWorkout.user = user.email;
 		}
-		//use the current workout
-		//get the user if authentiicated
-		//post the workout to userWorkouts, referenced to the user._id
-
-		// const response = await fetch('api/userWorkouts', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(postWorkout),
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// });
-
-		// const data = await response.json();
-		// console.log(data);
 	}
 
 	useEffect(() => {
@@ -141,65 +65,6 @@ export default function Custom({
 				useWorkout={[workout, setWorkout]}
 				workoutStyleList={workoutStyleList}
 			/>
-			{/* <label htmlFor="workoutStyle">
-				<b>Workout Style: </b>
-			</label>
-			<select
-				name="workoutStyle"
-				id="workoutStyle"
-				value={workout.displayStyle}
-				onChange={setWorkoutStyle}
-			>
-				{workoutStyleList.map((workoutStyle) => (
-					<option value={workoutStyle} key={workoutStyle}>
-						{workoutStyle}
-					</option>
-				))}
-			</select>
-
-			<div className={styles.infoGrid}>
-				{workoutInfo.map((info, i) => (
-					<React.Fragment key={i}>
-						<b className={styles.label} key={i}>
-							{workoutInfoLabels[i]}
-						</b>
-						<div
-							className={cn(styles.info, {
-								[styles.span3]: i >= 4,
-							})}
-						>
-							{workout[info]}
-						</div>
-					</React.Fragment>
-				))}
-			</div>
-			<b>Exercises: </b>
-			<button onClick={clearAll}>Clear Stations</button>
-			<button onClick={resetAll}>Reset Stations</button>
-			<ol className={styles.stations}>
-				{workout.stationList
-					.filter((_, i) => i < workout.stations)
-					.map((station, i) => (
-						<li className={styles.station} key={i}>
-							<textarea
-								rows={1}
-								id={'station_' + i}
-								value={station}
-								onChange={handleChange}
-								className={styles.stationInput}
-							></textarea>
-							<button
-								value=""
-								id={'station_' + i}
-								className={styles.clearStation}
-								onClick={handleChange}
-								tabIndex={-1}
-							>
-								X
-							</button>
-						</li>
-					))}
-			</ol> */}
 			<Link href="/workout">
 				<button onClick={startWorkout}>Start Workout</button>
 			</Link>
@@ -207,12 +72,23 @@ export default function Custom({
 	);
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async (context) => {
+	const date = new Date();
+
+	const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 	const workoutStyleList = await getUniqueWorkoutStyles();
+	const todaysWorkout = await getWorkoutByDate(today);
 
 	return {
 		props: {
 			workoutStyleList,
+			todaysWorkout: todaysWorkout
+				? CreateWorkout(
+						todaysWorkout.date,
+						todaysWorkout.style,
+						todaysWorkout.stationList
+				  ) //eslint-disable-line no-mixed-spaces-and-tabs
+				: null,
 		},
 	};
 };

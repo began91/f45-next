@@ -4,14 +4,28 @@ import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { getAllWorkouts, getWorkoutByMonth } from 'lib/mongodb';
+import { areDatesEqual } from 'src/helpers/areDatesEqual';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
 interface ScheduleType {
 	monthlyWorkouts: WorkoutType[][];
 	date: Date;
+	workout: WorkoutType;
+	useWorkout: [WorkoutType, Dispatch<SetStateAction<WorkoutType>>];
 }
 
-export default function Schedule({ monthlyWorkouts, date }: ScheduleType) {
+export default function Schedule({
+	monthlyWorkouts,
+	date,
+	workout,
+	useWorkout,
+}: ScheduleType) {
 	date = new Date(date);
+
+	const setWorkout = useWorkout[1];
+	useEffect(() => {
+		setWorkout(workout);
+	}, [workout, setWorkout]);
 
 	const router = useRouter();
 	if (router.isFallback) {
@@ -64,10 +78,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		); //change to two separate params [year]/[month]
 	}
 
-	// const { getWorkoutByMonth } = require('lib/mongodb');
 	let monthlyWorkouts = await getWorkoutByMonth(
 		new Date(year, month - 1, date)
 	);
+
 	monthlyWorkouts = monthlyWorkouts.map((week) =>
 		week.map((workout) =>
 			workout
@@ -79,11 +93,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 				: null
 		)
 	);
-	// console.log(monthlyWorkouts);
+
+	const workout =
+		monthlyWorkouts
+			.flat()
+			.find((workout) =>
+				areDatesEqual(new Date(year, month - 1, date), workout?.date)
+			) || CreateWorkout(new Date(year, month - 1, date), 'Abacus', []);
+
 	return {
 		props: {
 			monthlyWorkouts,
 			date: new Date(year, month - 1, date).toISOString(),
+			workout,
 		},
 	};
 };

@@ -83,9 +83,7 @@ export async function getWorkoutByDate(date: Date) {
 		.collection('workouts')
 		.findOne({ date: date.toISOString() }, { projection: { _id: 0 } });
 
-	// if (workout) {
-	// 	(await workout)._id = '';
-	// }
+	// console.log(workout);
 
 	// client.close();
 	return workout;
