@@ -72,7 +72,7 @@ export default function Custom({
 	);
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getStaticProps: GetStaticProps = async () => {
 	const date = new Date();
 
 	const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
