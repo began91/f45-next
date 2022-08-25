@@ -17,7 +17,9 @@ import SetDisplay from '../components/WorkoutScreen/SetDisplay';
 import cn from 'classnames';
 import Image from 'next/image';
 import defaultLogo from 'public/workout-logos/defaultLogo.png';
-import { WorkoutType } from 'src/helpers/CreateWorkout';
+import CreateWorkout, { WorkoutType } from 'src/helpers/CreateWorkout';
+import { getWorkoutByDate } from 'lib/mongodb';
+import { GetStaticProps } from 'next';
 
 interface WorkoutScreenType {
 	useWorkout: [
@@ -28,8 +30,13 @@ interface WorkoutScreenType {
 	snd: HTMLAudioElement;
 }
 
-export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
-	const workout = useWorkout[0];
+export default function WorkoutScreen({
+	useWorkout,
+	snd,
+	todaysWorkout,
+}: WorkoutScreenType) {
+	const workout = useWorkout[0] || todaysWorkout;
+
 	//state
 	const [mainTimer, setMainTimer] = useState(0);
 	const [isActive, setIsActive] = useState(true);
@@ -53,7 +60,11 @@ export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
 				endWorkout();
 			}
 			snd.src = Beep;
-			snd.play();
+			try {
+				snd.play();
+			} catch (error) {
+				console.log(error);
+			}
 			setCurrentSet((currentSet) => currentSet + 1);
 			setSetTimer(-1);
 		}
@@ -158,4 +169,18 @@ export default function WorkoutScreen({ useWorkout, snd }: WorkoutScreenType) {
 	);
 }
 
-// export const getServerSideProps()
+export const getStaticProps: GetStaticProps = async () => {
+	const date = new Date();
+	const workout = await getWorkoutByDate(
+		new Date(date.getFullYear(), date.getMonth(), date.getDate())
+	);
+	const todaysWorkout = workout
+		? CreateWorkout(workout.date, workout.style, workout.stationList)
+		: CreateWorkout(date, 'Abacus', []);
+
+	return {
+		props: {
+			todaysWorkout,
+		},
+	};
+};
