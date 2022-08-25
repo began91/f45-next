@@ -98,7 +98,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		monthlyWorkouts
 			.flat()
 			.find((workout) =>
-				areDatesEqual(new Date(year, month - 1, date), workout?.date)
+				areDatesEqual(
+					new Date(year, month - 1, date),
+					new Date(workout?.date)
+				)
 			) || CreateWorkout(new Date(year, month - 1, date), 'Abacus', []);
 
 	return {
