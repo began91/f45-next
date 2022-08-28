@@ -172,7 +172,7 @@ export default function WorkoutScreen({
 export const getStaticProps: GetStaticProps = async () => {
 	const date = new Date();
 	const workout = await getWorkoutByDate(
-		new Date(date.getFullYear(), date.getMonth(), date.getDate())
+		new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
 	);
 	const todaysWorkout = workout
 		? CreateWorkout(workout.date, workout.style, workout.stationList)

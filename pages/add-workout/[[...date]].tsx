@@ -120,9 +120,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		return {
 			params: {
 				date: [
-					String(date.getFullYear()),
-					String(date.getMonth() + 1),
-					String(date.getDate()),
+					String(date.getUTCFullYear()),
+					String(date.getUTCMonth() + 1),
+					String(date.getUTCDate()),
 				],
 			},
 		};
@@ -136,9 +136,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const newDate = new Date(); //default is today if no date is specified
-	let year = newDate.getFullYear();
-	let month = newDate.getMonth() + 1;
-	let date = newDate.getDate();
+	let year = newDate.getUTCFullYear();
+	let month = newDate.getUTCMonth() + 1;
+	let date = newDate.getUTCDate();
 	if (params?.date) {
 		[year, month, date] = (params.date as string[]).map((a: string) =>
 			Number(a)

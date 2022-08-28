@@ -25,11 +25,13 @@ function Week({ calendarWeek, week, month, db, activeDate }: WeekType) {
 					month={!!month}
 					db={db}
 					isActiveDate={
-						calendarWeek[i].getMonth() === activeDate.getMonth() &&
-						calendarWeek[i].getDate() === activeDate.getDate()
+						calendarWeek[i].getUTCMonth() ===
+							activeDate.getUTCMonth() &&
+						calendarWeek[i].getUTCDate() === activeDate.getUTCDate()
 					}
 					isThisMonth={
-						calendarWeek[i].getMonth() === activeDate.getMonth()
+						calendarWeek[i].getUTCMonth() ===
+						activeDate.getUTCMonth()
 					}
 					date={calendarWeek[i]}
 				/>
@@ -58,9 +60,9 @@ function DaySquare({
 	const isWorkout = !!workout;
 
 	const logo = workout?.logo || logos.defaultLogo;
-	const datePathString = `/${date.getFullYear()}/${
-		date.getMonth() + 1
-	}/${date.getDate()}`;
+	const datePathString = `/${date.getUTCFullYear()}/${
+		date.getUTCMonth() + 1
+	}/${date.getUTCDate()}`;
 
 	let href: string; //vary link based on current page view
 	if (month) {
@@ -139,7 +141,8 @@ export default function NewCalendar({
 		const daysInMonth1 = date
 			.getWeek()
 			.filter(
-				(date: Date) => date.getMonth() === date.getWeek()[0].getMonth()
+				(date: Date) =>
+					date.getUTCMonth() === date.getWeek()[0].getUTCMonth()
 			).length as number;
 		const daysInMonth2 = 7 - daysInMonth1; //the rest of the week is in the net month (may be 0)
 		const monthDisplayShort = calendarWeek.map((day: Date) => {
@@ -202,11 +205,27 @@ export default function NewCalendar({
 
 	//date commanded by the back and fwd buttons (1 wk or 1 month)
 	const backDate = week
-		? new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7)
-		: new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
+		? new Date(
+				date.getUTCFullYear(),
+				date.getUTCMonth(),
+				date.getUTCDate() - 7
+		  )
+		: new Date(
+				date.getUTCFullYear(),
+				date.getUTCMonth() - 1,
+				date.getUTCDate()
+		  );
 	const fwdDate = week
-		? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7)
-		: new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
+		? new Date(
+				date.getUTCFullYear(),
+				date.getUTCMonth(),
+				date.getUTCDate() + 7
+		  )
+		: new Date(
+				date.getUTCFullYear(),
+				date.getUTCMonth() + 1,
+				date.getUTCDate()
+		  );
 
 	let hrefPage: string;
 	if (db) {
@@ -217,19 +236,19 @@ export default function NewCalendar({
 		hrefPage = 'weekly';
 	}
 
-	const hrefBack = `/${hrefPage}/${backDate.getFullYear()}/${
-		backDate.getMonth() + 1
-	}/${backDate.getDate()}`;
+	const hrefBack = `/${hrefPage}/${backDate.getUTCFullYear()}/${
+		backDate.getUTCMonth() + 1
+	}/${backDate.getUTCDate()}`;
 
-	const hrefFwd = `/${hrefPage}/${fwdDate.getFullYear()}/${
-		fwdDate.getMonth() + 1
-	}/${fwdDate.getDate()}`;
+	const hrefFwd = `/${hrefPage}/${fwdDate.getUTCFullYear()}/${
+		fwdDate.getUTCMonth() + 1
+	}/${fwdDate.getUTCDate()}`;
 
 	//date commanded by go to today button
 	const today = new Date();
-	const hrefToday = `/${hrefPage}/${today.getFullYear()}/${
-		today.getMonth() + 1
-	}/${today.getDate()}`;
+	const hrefToday = `/${hrefPage}/${today.getUTCFullYear()}/${
+		today.getUTCMonth() + 1
+	}/${today.getUTCDate()}`;
 
 	//buttons for incrementing the date
 	const highButtons = (
@@ -250,9 +269,9 @@ export default function NewCalendar({
 		<div className="calendar">
 			{highButtons}
 			<LinkIf
-				href={`/schedule/${date.getFullYear()}/${
-					date.getMonth() + 1
-				}/${date.getDate()}`}
+				href={`/schedule/${date.getUTCFullYear()}/${
+					date.getUTCMonth() + 1
+				}/${date.getUTCDate()}`}
 				isLink={!db && !!week}
 			>
 				{monthRow}

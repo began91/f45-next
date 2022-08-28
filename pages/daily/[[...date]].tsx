@@ -38,9 +38,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		return {
 			params: {
 				date: [
-					String(date.getFullYear()),
-					String(date.getMonth() + 1),
-					String(date.getDate()),
+					String(date.getUTCFullYear()),
+					String(date.getUTCMonth() + 1),
+					String(date.getUTCDate()),
 				],
 			},
 		};
@@ -57,9 +57,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	// use date to get workout from mongodb
 	//default is today
 	const newDate = new Date();
-	let year = newDate.getFullYear();
-	let month = newDate.getMonth() + 1;
-	let date = newDate.getDate();
+	let year = newDate.getUTCFullYear();
+	let month = newDate.getUTCMonth() + 1;
+	let date = newDate.getUTCDate();
 	if (params?.date) {
 		//if a date was supplied, set that instead
 
