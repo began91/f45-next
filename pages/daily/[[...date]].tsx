@@ -53,9 +53,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-	// console.log(typeof Workout);
-	// use date to get workout from mongodb
-	//default is today
+	//default is today if no date specified
 	const newDate = new Date();
 	let year = newDate.getFullYear();
 	let month = newDate.getMonth() + 1;
