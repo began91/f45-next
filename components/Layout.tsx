@@ -55,9 +55,9 @@ function NavBar({ page, date }: NavBarType) {
 		);
 	}
 	//year,month,day to add to daily link
-	const datePathString = `/${date.getFullYear()}/${
-		date.getMonth() + 1
-	}/${date.getDate()}`;
+	const datePathString = `/${date.getUTCFullYear()}/${
+		date.getUTCMonth() + 1
+	}/${date.getUTCDate()}`;
 
 	//links to iterate over
 	const href = [
