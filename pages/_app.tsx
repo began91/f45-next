@@ -6,7 +6,10 @@ import type { AppProps } from 'next/app';
 import { WorkoutType } from 'src/helpers/CreateWorkout';
 
 function MyApp({ Component, pageProps }: AppProps) {
-	const useDate = useState(new Date());
+	const date = new Date();
+	const useDate = useState(
+		new Date(date.getFullYear(), date.getMonth() - 1, date.getDate())
+	); //set the state's UTC date to the local date
 	const useWorkout = useState(null as unknown as WorkoutType);
 
 	const [snd, setSnd] = useState(null as unknown as HTMLAudioElement);
