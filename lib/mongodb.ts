@@ -79,9 +79,20 @@ export async function getWorkoutByDate(date: Date) {
 
 	const { db } = await connectToDatabase();
 
-	const workout = await db
-		.collection('workouts')
-		.findOne({ date: date.toISOString() }, { projection: { _id: 0 } });
+	const minDate = new Date(date);
+	minDate.setUTCHours(0, 0, 0, 0);
+	const maxDate = new Date(date);
+	maxDate.setUTCHours(23, 59, 59, 999);
+
+	const workout = await db.collection('workouts').findOne(
+		{
+			date: {
+				$gte: minDate.toISOString(),
+				$lte: maxDate.toISOString(),
+			},
+		},
+		{ projection: { _id: 0 } }
+	);
 
 	// console.log(workout);
 
