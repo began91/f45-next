@@ -22,9 +22,9 @@ export default function Home({ useDate }: HomeType) {
 					<li>
 						Get a sneak peak at the upcoming F45{' '}
 						<Link
-							href={`schedule/${date.getUTCFullYear()}/${
-								date.getUTCMonth() + 1
-							}/${date.getUTCDate()}`}
+							href={`schedule/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}/${date.getDate()}`}
 						>
 							<a>class schedule</a>
 						</Link>
@@ -32,9 +32,9 @@ export default function Home({ useDate }: HomeType) {
 					<li>
 						See the workouts&apos;{' '}
 						<Link
-							href={`weekly/${date.getUTCFullYear()}/${
-								date.getUTCMonth() + 1
-							}/${date.getUTCDate()}`}
+							href={`weekly/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}/${date.getDate()}`}
 						>
 							<a>stations for this week</a>
 						</Link>
@@ -42,9 +42,9 @@ export default function Home({ useDate }: HomeType) {
 					<li>
 						Build your own{' '}
 						<Link
-							href={`custom/${date.getUTCFullYear()}/${
-								date.getUTCMonth() + 1
-							}/${date.getUTCDate()}`}
+							href={`custom/${date.getFullYear()}/${
+								date.getMonth() + 1
+							}/${date.getDate()}`}
 						>
 							<a>custom workouts</a>
 						</Link>{' '}
