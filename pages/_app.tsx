@@ -8,7 +8,7 @@ import { WorkoutType } from 'src/helpers/CreateWorkout';
 function MyApp({ Component, pageProps }: AppProps) {
 	const date = new Date();
 	const useDate = useState(
-		new Date(date.getFullYear(), date.getMonth() - 1, date.getDate())
+		new Date(date.getFullYear(), date.getMonth(), date.getDate())
 	); //set the state's UTC date to the local date
 	const useWorkout = useState(null as unknown as WorkoutType);
 
