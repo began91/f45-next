@@ -79,7 +79,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 						workout.style,
 						workout.stationList
 				  ) //eslint-disable-line no-mixed-spaces-and-tabs
-				: CreateWorkout(new Date(year, month - 1, date), 'Abacus', []),
+				: null,
 		},
 	};
 };
