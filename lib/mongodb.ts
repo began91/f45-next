@@ -105,10 +105,15 @@ export async function getWorkoutByWeek(date: Date) {
 
 	const { db } = await connectToDatabase();
 
+	const minDate = week[0];
+	minDate.setUTCHours(0, 0, 0, 0);
+	const maxDate = week[6];
+	maxDate.setUTCHours(23, 59, 59, 999);
+
 	const workouts = await db
 		.collection('workouts')
 		.find({
-			date: { $gte: week[0].toISOString(), $lte: week[6].toISOString() },
+			date: { $gte: minDate.toISOString(), $lte: maxDate.toISOString() },
 		})
 		.project({ _id: 0 })
 		.toArray();
@@ -128,12 +133,17 @@ export async function getWorkoutByMonth(date: Date) {
 
 	const { db } = await connectToDatabase();
 
+	const minDate = calendar[0][0];
+	minDate.setUTCHours(0, 0, 0, 0);
+	const maxDate = calendar[calendar.length - 1][6];
+	maxDate.setUTCHours(23, 59, 59, 999);
+
 	const workouts = await db
 		.collection('workouts')
 		.find({
 			date: {
-				$gte: calendar[0][0].toISOString(),
-				$lte: calendar[calendar.length - 1][6].toISOString(),
+				$gte: minDate.toISOString(),
+				$lte: maxDate.toISOString(),
 			},
 		})
 		.project({ _id: 0 })
