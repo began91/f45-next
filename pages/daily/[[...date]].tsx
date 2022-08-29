@@ -57,9 +57,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	// use date to get workout from mongodb
 	//default is today
 	const newDate = new Date();
-	let year = newDate.getUTCFullYear();
-	let month = newDate.getUTCMonth() + 1;
-	let date = newDate.getUTCDate();
+	let year = newDate.getFullYear();
+	let month = newDate.getMonth() + 1;
+	let date = newDate.getDate();
 	if (params?.date) {
 		//if a date was supplied, set that instead
 
@@ -69,17 +69,16 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	}
 
 	// const { getWorkoutByDate } = require('lib/mongodb');
-	const workout = await getWorkoutByDate(new Date(year, month - 1, date));
+	const dbWorkout = await getWorkoutByDate(new Date(year, month - 1, date));
+	const workout = CreateWorkout(
+		dbWorkout?.date,
+		dbWorkout?.style,
+		dbWorkout?.stationList
+	);
 
 	return {
 		props: {
-			workout: workout
-				? CreateWorkout(
-						workout.date,
-						workout.style,
-						workout.stationList
-				  ) //eslint-disable-line no-mixed-spaces-and-tabs
-				: null,
+			workout,
 		},
 	};
 };

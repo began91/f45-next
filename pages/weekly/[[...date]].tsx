@@ -132,9 +132,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const newDate = new Date(); //default is today if no date is specified
-	let year = newDate.getUTCFullYear();
-	let month = newDate.getUTCMonth() + 1;
-	let date = newDate.getUTCDate();
+	let year = newDate.getFullYear();
+	let month = newDate.getMonth() + 1;
+	let date = newDate.getDate();
 	if (params?.date) {
 		[year, month, date] = (params.date as string[]).map((a: string) =>
 			Number(a)
@@ -164,5 +164,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 			date: new Date(year, month - 1, date).toISOString(),
 			workout,
 		},
+		revalidate: 300,
 	};
 };
